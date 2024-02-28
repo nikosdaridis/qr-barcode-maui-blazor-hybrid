@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:scanner="clr-namespace:BarcodeScanning;assembly=BarcodeScanning.Native.Maui"
+             x:Class="QRBarcodeApp.Components.Pages.CameraScanner"
+             Title="CameraScanner">
+
+    <AbsoluteLayout>
+        <scanner:CameraView 
+        AbsoluteLayout.LayoutFlags="All"
+        AbsoluteLayout.LayoutBounds="0,0,1,1"
+        OnDetectionFinished="CameraView_OnDetectionFinished"
+        CaptureQuality="High"
+        ForceInverted="False"
+        TapToFocusEnabled="True"
+        BarcodeSymbologies="All"
+        x:Name="Scanner"/>
+
+        <Grid ColumnDefinitions="*, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,0.1">
+            <Button Text="C" Grid.Column="0" WidthRequest="50" HeightRequest="50" CornerRadius="25" Clicked="CameraButton_Clicked"/>
+            <Button Text="T" Grid.Column="1" WidthRequest="50" HeightRequest="50" CornerRadius="25" Clicked="TorchButton_Clicked"/>
+        </Grid>
+    </AbsoluteLayout>
+
+</ContentPage>

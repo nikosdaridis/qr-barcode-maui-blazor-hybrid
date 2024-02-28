@@ -1,0 +1,11 @@
+﻿@page "/"
+
+@inject CameraScannerService CameraScannerService
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        App.Current.MainPage.Navigation.PushModalAsync(new CameraScanner(CameraScannerService));
+    }
+}
