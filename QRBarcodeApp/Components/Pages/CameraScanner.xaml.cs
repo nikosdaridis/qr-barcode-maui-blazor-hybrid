@@ -1,16 +1,19 @@
 using BarcodeScanning;
+using Microsoft.AspNetCore.Components;
 using QRBarcodeApp.Services;
 
 namespace QRBarcodeApp.Components.Pages;
 
 public partial class CameraScanner : ContentPage
 {
-    private readonly CameraScannerService _cameraScanService;
+    private readonly NavigationManager _navigationManager;
+    private readonly LocalStorageService _localStorageService;
     private bool _scanned;
 
-    public CameraScanner(CameraScannerService cameraScanService)
+    public CameraScanner(NavigationManager navigationManager, LocalStorageService localStorageService)
     {
-        _cameraScanService = cameraScanService;
+        _navigationManager = navigationManager;
+        _localStorageService = localStorageService;
         InitializeComponent();
     }
 
@@ -21,7 +24,6 @@ public partial class CameraScanner : ContentPage
 
         _scanned = false;
         Scanner.CameraEnabled = true;
-        Scanner.VibrationOnDetected = _cameraScanService.VibrationOnDetected;
     }
 
     protected override bool OnBackButtonPressed()
@@ -37,12 +39,28 @@ public partial class CameraScanner : ContentPage
 
     private async void CameraView_OnDetectionFinished(object sender, OnDetectionFinishedEventArg e)
     {
-        if (!_scanned && e?.BarcodeResults?.FirstOrDefault() is not null)
+
+        if (Navigation.ModalStack.Any())
         {
-            _scanned = true;
-            await Navigation.PopModalAsync();
-            await _cameraScanService.ScanFinished(e.BarcodeResults.First());
+            if (!_scanned && e?.BarcodeResults?.FirstOrDefault() is not null)
+            {
+                _scanned = true;
+                await Navigation.PopModalAsync(false);
+                string id = await _localStorageService.SaveQRAsync(e.BarcodeResults.First());
+                _navigationManager.NavigateTo($"/scanresult/{id}");
+            }
         }
+    }
+
+    private async void BackButton_Clicked(object sender, EventArgs e)
+    {
+        await Navigation.PopModalAsync(false);
+
+        string activeTab = await _localStorageService.GetActiveTab();
+        if (activeTab is "/scan")
+            _navigationManager.NavigateTo("/history");
+        else
+            _navigationManager.NavigateTo(await _localStorageService.GetActiveTab());
     }
 
     private void CameraButton_Clicked(object sender, EventArgs e)

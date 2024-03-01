@@ -1,0 +1,15 @@
+﻿@page "/favorites"
+
+@inject LocalStorageService LocalStorageService
+
+<h1>Favorites</h1>
+
+@code {
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        await LocalStorageService.SaveActiveTab("/favorites");
+        StateHasChanged();
+    }
+}

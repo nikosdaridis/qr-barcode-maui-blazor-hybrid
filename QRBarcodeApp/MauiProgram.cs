@@ -9,7 +9,7 @@ namespace QRBarcodeApp
     {
         public static MauiApp CreateMauiApp()
         {
-            var builder = MauiApp.CreateBuilder();
+            MauiAppBuilder? builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
@@ -20,9 +20,7 @@ namespace QRBarcodeApp
 
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddBlazoredLocalStorage();
-            builder.Services.AddScoped<CameraScannerService>();
             builder.Services.AddScoped<LocalStorageService>();
-
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

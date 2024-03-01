@@ -16,9 +16,10 @@
         BarcodeSymbologies="All"
         x:Name="Scanner"/>
 
-        <Grid ColumnDefinitions="*, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,0.1">
-            <Button Text="C" Grid.Column="0" WidthRequest="50" HeightRequest="50" CornerRadius="25" Clicked="CameraButton_Clicked"/>
-            <Button Text="T" Grid.Column="1" WidthRequest="50" HeightRequest="50" CornerRadius="25" Clicked="TorchButton_Clicked"/>
+        <Grid ColumnDefinitions="*, *, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,0.2">
+            <Button Text="Back" Grid.Column="0" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="BackButton_Clicked"/>
+            <Button Text="Camera" Grid.Column="1" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="CameraButton_Clicked"/>
+            <Button Text="Flash" Grid.Column="2" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="TorchButton_Clicked"/>
         </Grid>
     </AbsoluteLayout>
 

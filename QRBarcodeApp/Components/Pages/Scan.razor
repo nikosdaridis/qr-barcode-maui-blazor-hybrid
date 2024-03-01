@@ -1,0 +1,22 @@
+﻿@page "/scan"
+
+@inject NavigationManager NavigationManager
+@inject LocalStorageService LocalStorageService
+
+<h1>Scan</h1>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+
+        await App.Current!.MainPage!.Navigation.PushModalAsync(new CameraScanner(NavigationManager, LocalStorageService), false);
+    }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        StateHasChanged();
+    }
+}

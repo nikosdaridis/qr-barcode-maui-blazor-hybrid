@@ -1,0 +1,34 @@
+﻿@page "/history"
+
+@inject LocalStorageService LocalStorageService
+
+<h1>History</h1>
+
+
+@if (_QRList?.Any() == true)
+{
+    @foreach (QRModel QR in _QRList)
+    {
+        <h5>Value: @(QR?.Value ?? "")</h5>
+        <h5>Type: @(QR?.Type ?? "")</h5>
+        <h5>Format: @(QR?.Format ?? "")</h5>
+        <h5>Favorite: @(QR?.Favorite.ToString() ?? "")</h5>
+    }
+}
+else
+{
+    <h3>No QR codes found</h3>
+}
+
+@code {
+    private List<QRModel>? _QRList;
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        await LocalStorageService.SaveActiveTab("/history");
+        _QRList = await LocalStorageService.GetQRAllAsync();
+        StateHasChanged();
+    }
+}

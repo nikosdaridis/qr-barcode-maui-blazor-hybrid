@@ -1,15 +1,13 @@
-﻿@page "/ScanResult/{Id}"
+﻿@page "/scanresult"
+@page "/scanresult/{Id}"
 
-@inject CameraScannerService CameraScannerService
-@inject LocalStorageService LocalStorageService
 @inject NavigationManager NavigationManager
+@inject LocalStorageService LocalStorageService
+
 
 <h1>Value: @(_QR?.Value ?? "")</h1>
 <h1>Type: @(_QR?.Type ?? "")</h1>
 <h1>Format: @(_QR?.Format ?? "")</h1>
-
-<button @onclick="NavigateToScan">To Camera Scan</button>
-<button @onclick="NavigateToHome">To Home</button>
 
 @code {
     [Parameter]
@@ -22,18 +20,16 @@
         await base.SetParametersAsync(parameters);
 
         if (Id is null)
-            NavigateToHome();
+        {
+            if (await LocalStorageService.GetActiveTab() is "/scanresult")
+                NavigationManager.NavigateTo("/history");
+            else
+                NavigationManager.NavigateTo("/scan");
+        }
+
+        await LocalStorageService.SaveActiveTab("/scanresult");
 
         _QR = await LocalStorageService.GetQRAsync(Id!);
         StateHasChanged();
-    }
-
-    private void NavigateToScan()
-    {
-        App.Current.MainPage.Navigation.PushModalAsync(new CameraScanner(CameraScannerService));
-    }
-    private void NavigateToHome()
-    {
-        NavigationManager.NavigateTo("/");
     }
 }

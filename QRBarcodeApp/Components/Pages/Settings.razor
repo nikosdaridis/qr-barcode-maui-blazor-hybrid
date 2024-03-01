@@ -1,0 +1,15 @@
+﻿@page "/settings"
+
+@inject LocalStorageService LocalStorageService
+
+<h1>Settings</h1>
+
+@code {
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        await LocalStorageService.SaveActiveTab("/settings");
+        StateHasChanged();
+    }
+}

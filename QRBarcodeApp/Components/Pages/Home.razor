@@ -1,11 +1,15 @@
 ﻿@page "/"
 
-@inject CameraScannerService CameraScannerService
+@inject NavigationManager NavigationManager
+@inject LocalStorageService LocalStorageService
+
+<h1>Home</h1>
 
 @code {
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        App.Current.MainPage.Navigation.PushModalAsync(new CameraScanner(CameraScannerService));
+
+        NavigationManager.NavigateTo(await LocalStorageService.GetActiveTab());
     }
 }

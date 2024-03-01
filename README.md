@@ -4,12 +4,12 @@
 
 ## Todo
 
-1. Tab bar
-2. UI using Taiwlind
-3. QR Generator
-4. Settings
+1. UI
+2. QR Generator
+3. Settings
 
 ## Done
 
 1. QR & Barcode Scanning
-2. LocalStorage history save
+2. LocalStorage save
+3. TabBar

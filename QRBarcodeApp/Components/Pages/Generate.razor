@@ -1,0 +1,15 @@
+﻿@page "/generate"
+
+@inject LocalStorageService LocalStorageService
+
+<h1>Generate</h1>
+
+@code {
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        await LocalStorageService.SaveActiveTab("/generate");
+        StateHasChanged();
+    }
+}
