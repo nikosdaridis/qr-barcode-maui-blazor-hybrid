@@ -5,11 +5,4 @@
 ## Todo
 
 1. UI
-2. QR Generator
-3. Settings
-
-## Done
-
-1. QR & Barcode Scanning
-2. LocalStorage save
-3. TabBar
+2. Settings

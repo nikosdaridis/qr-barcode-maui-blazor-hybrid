@@ -1,15 +1,101 @@
 ﻿@page "/generate"
+@page "/generate/{QRText}"
 
 @inject LocalStorageService LocalStorageService
 
 <h1>Generate</h1>
 
-@code {
-    public override async Task SetParametersAsync(ParameterView parameters)
-    {
-        await base.SetParametersAsync(parameters);
+<input type="text" value="@QRText" @oninput="HandleInput" placeholder="Enter Text" />
 
+@if (_QRImageBase64 is not null)
+{
+    <img src="@_QRImageBase64" height="300" width="300" />
+
+    <div>
+        <button @onclick="SaveQR">Save Image</button>
+        <button @onclick="ShareQR">Share</button>
+
+        @if (_showSaveToHistoryButton)
+        {
+            <button @onclick="SaveQRToHistory">Save To History</button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string? QRText { get; set; }
+
+    private byte[]? _QRBytes;
+    private string? _QRImageBase64;
+    private bool _showSaveToHistoryButton;
+
+    protected override async Task OnInitializedAsync()
+    {
         await LocalStorageService.SaveActiveTab("/generate");
+    }
+
+    private void HandleInput(ChangeEventArgs e)
+    {
+        QRText = e.Value?.ToString();
+        GenerateQRCode();
+    }
+
+    private async void GenerateQRCode()
+    {
+        if (string.IsNullOrWhiteSpace(QRText))
+        {
+            _QRBytes = null;
+            _QRImageBase64 = null;
+            return;
+        }
+
+        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(QRText, QRCodeGenerator.ECCLevel.L);
+
+        PngByteQRCode qRCode = new PngByteQRCode(qrCodeData);
+        _QRBytes = qRCode.GetGraphic(20);
+        _QRImageBase64 = $"data:image/png;base64,{Convert.ToBase64String(_QRBytes)}";
+        _showSaveToHistoryButton = !await QRExistsInHistory();
+
         StateHasChanged();
+    }
+
+    private async void SaveQR()
+    {
+        await MediaGallery.SaveAsync(MediaFileType.Image, _QRBytes, "QR.png");
+    }
+
+    private async void ShareQR()
+    {
+        if (_QRBytes is null)
+            return;
+
+        string path = FileSystem.Current.CacheDirectory;
+        string fileName = "QRCode.png";
+        string fullPath = Path.Combine(path, fileName);
+
+        await File.WriteAllBytesAsync(fullPath, _QRBytes);
+        string file = Path.Combine(FileSystem.CacheDirectory, fileName);
+
+        await Share.Default.RequestAsync(new ShareFileRequest
+            {
+                Title = "Share QR Code",
+                File = new ShareFile(file)
+            });
+    }
+
+    private async Task SaveQRToHistory()
+    {
+        BarcodeResult QR = new BarcodeResult() { RawValue = QRText, BarcodeType = BarcodeTypes.Text, BarcodeFormat = BarcodeFormats.QRCode };
+        await LocalStorageService.SaveQRAsync(QR);
+        _showSaveToHistoryButton = false;
+    }
+
+    private async Task<bool> QRExistsInHistory()
+    {
+        List<QRModel> QRHistory = await LocalStorageService.GetQRAllAsync();
+
+        return QRHistory.Any(qr => qr.Value == QRText);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BarcodeScanning;
 using Blazored.LocalStorage;
+using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using QRBarcodeApp.Services;
 
@@ -16,6 +17,7 @@ namespace QRBarcodeApp
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 })
+                .UseMauiCommunityToolkit()
                 .UseBarcodeScanning();
 
             builder.Services.AddMauiBlazorWebView();

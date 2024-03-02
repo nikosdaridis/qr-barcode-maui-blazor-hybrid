@@ -60,10 +60,13 @@
     <ItemGroup>
         <PackageReference Include="BarcodeScanning.Native.Maui" Version="1.2.4" />
         <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.7" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.7" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.7" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <PackageReference Include="QRCoder-ImageSharp" Version="0.10.0" />
+        <PackageReference Include="Xamarin.MediaGallery" Version="2.2.1" />
     </ItemGroup>
 
     <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionQRBarcodeAppHideInfoBar="True" /></VisualStudio></ProjectExtensions>
