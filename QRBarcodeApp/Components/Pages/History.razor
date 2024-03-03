@@ -27,7 +27,7 @@ else
     {
         await base.SetParametersAsync(parameters);
 
-        await LocalStorageService.SaveActiveTab("/history");
+        await LocalStorageService.SaveActiveTabAsync("/history");
         _QRList = await LocalStorageService.GetQRAllAsync();
         StateHasChanged();
     }

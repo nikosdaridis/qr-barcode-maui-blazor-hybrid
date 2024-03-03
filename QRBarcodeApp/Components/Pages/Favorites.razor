@@ -9,7 +9,7 @@
     {
         await base.SetParametersAsync(parameters);
 
-        await LocalStorageService.SaveActiveTab("/favorites");
+        await LocalStorageService.SaveActiveTabAsync("/favorites");
         StateHasChanged();
     }
 }

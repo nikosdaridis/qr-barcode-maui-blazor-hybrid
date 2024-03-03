@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "build": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/app.css",
+    "watch": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/app.css --watch",
+    "release": "cross-env NODE_ENV=production npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/app.css --minify"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "tailwindcss": "^3.4.1"
+  }
+}

@@ -10,6 +10,14 @@
     {
         base.OnInitialized();
 
-        NavigationManager.NavigateTo(await LocalStorageService.GetActiveTab());
+        string activeTab = await LocalStorageService.GetActiveTabAsync();
+
+        if (string.IsNullOrWhiteSpace(activeTab))
+        {
+            NavigationManager.NavigateTo("/history");
+            App.Current!.MainPage!.ShowPopup(new CameraScanner(NavigationManager, LocalStorageService));
+        }
+        else
+            NavigationManager.NavigateTo(activeTab);
     }
 }

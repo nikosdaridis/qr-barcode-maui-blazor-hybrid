@@ -18,7 +18,7 @@ namespace QRBarcodeApp.Services
             if (string.IsNullOrWhiteSpace(id))
                 return null;
 
-            List<QRModel> qrHistory = await GetQRHistoryAsync();
+            List<QRModel> qrHistory = await GetQRAllAsync();
             return qrHistory.FirstOrDefault(qr => qr.Id == id);
         }
 
@@ -29,7 +29,7 @@ namespace QRBarcodeApp.Services
 
         public async Task<string> SaveQRAsync(BarcodeResult scanResult)
         {
-            List<QRModel> qrHistory = await GetQRHistoryAsync();
+            List<QRModel> qrHistory = await GetQRAllAsync();
 
             string type = scanResult.BarcodeType.ToString().Split('.').Last();
             string format = scanResult.BarcodeFormat.ToString().Split('.').Last();
@@ -40,19 +40,14 @@ namespace QRBarcodeApp.Services
             return newQR.Id;
         }
 
-        public async Task<string> GetActiveTab()
+        public async Task<string> GetActiveTabAsync()
         {
-            return await _localStorageService.GetItemAsync<string>("ActiveTab") ?? "/scan";
+            return await _localStorageService.GetItemAsync<string>("ActiveTab") ?? "";
         }
 
-        public async Task SaveActiveTab(string activeTab)
+        public async Task SaveActiveTabAsync(string activeTab)
         {
             await _localStorageService.SetItemAsync("ActiveTab", activeTab);
-        }
-
-        private async Task<List<QRModel>> GetQRHistoryAsync()
-        {
-            return await _localStorageService.GetItemAsync<List<QRModel>>("QRHistory") ?? [];
         }
     }
 }

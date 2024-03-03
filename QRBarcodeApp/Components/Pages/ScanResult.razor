@@ -4,7 +4,6 @@
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
 
-
 <h1>Value: @(_QR?.Value ?? "")</h1>
 <h1>Type: @(_QR?.Type ?? "")</h1>
 <h1>Format: @(_QR?.Format ?? "")</h1>
@@ -21,13 +20,13 @@
 
         if (Id is null)
         {
-            if (await LocalStorageService.GetActiveTab() is "/scanresult")
+            if (await LocalStorageService.GetActiveTabAsync() == "/scanresult")
                 NavigationManager.NavigateTo("/history");
             else
-                NavigationManager.NavigateTo("/scan");
+                App.Current!.MainPage!.ShowPopup(new CameraScanner(NavigationManager, LocalStorageService));
         }
 
-        await LocalStorageService.SaveActiveTab("/scanresult");
+        await LocalStorageService.SaveActiveTabAsync("/scanresult");
 
         _QR = await LocalStorageService.GetQRAsync(Id!);
         StateHasChanged();

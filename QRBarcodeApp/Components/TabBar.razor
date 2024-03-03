@@ -1,57 +1,6 @@
-﻿@inject LocalStorageService LocalStorageService
-
-<div class="tabbar">
-    <NavLink class="@($"tab {IsActiveTab("scan")}")" draggable="false" href="/scan"><img class="icon" src="scan.svg" /></NavLink>
-    <NavLink class="@($"tab {IsActiveTab("generate")}")" draggable="false" href="/generate"><img class="icon" src="generate.svg" /></NavLink>
-    <NavLink class="@($"tab {IsActiveTab("favorites")}")" draggable="false" href="/favorites"><img class="icon" src="favorites.svg" /></NavLink>
-    <NavLink class="@($"tab {IsActiveTab("history")}")" draggable="false" href="/history"><img class="icon" src="history.svg" /></NavLink>
-    <NavLink class="@($"tab {IsActiveTab("settings")}")" draggable="false" href="/settings"><img class="icon" src="settings.svg" /></NavLink>
-</div>
-
-@code {
-    private string activeTab = "";
-
-    protected override async Task OnInitializedAsync()
+﻿<nav class="flex justify-between fixed bottom-0 w-full h-[50px] bg-[#141414]">
+    @foreach (string tabName in new[] { "scan", "generate", "favorites", "history", "settings" })
     {
-        activeTab = await LocalStorageService.GetActiveTab();
+        <TabBarNavLink Href=@($"/{tabName}") IconSrc=@($"{tabName}.svg") />
     }
-
-    private async Task<string> IsActiveTab(string tabName)
-    {
-        string activeTab = await LocalStorageService.GetActiveTab();
-        return activeTab.Contains(tabName) ? "active" : "";
-    }
-}
-
-<style>
-    .tabbar {
-        display: flex;
-        justify-content: space-between;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        height: 50px;
-        background-color: #232828;
-    }
-
-    .tab {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-        .tab img {
-            transition: transform 0.5s ease;
-            filter: invert(60%) sepia(5%) saturate(200%) hue-rotate(177deg) brightness(88%) contrast(82%);
-        }
-
-        .tab.active img {
-            filter: invert(25%) sepia(85%) saturate(4959%) hue-rotate(214deg) brightness(104%) contrast(104%);
-        }
-
-    .icon {
-        height: 30px;
-        width: 30px;
-    }
-</style>
+</nav>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:scanner="clr-namespace:BarcodeScanning;assembly=BarcodeScanning.Native.Maui"
              x:Class="QRBarcodeApp.Components.Pages.CameraScanner"
-             Title="CameraScanner">
+             >
 
     <AbsoluteLayout>
         <scanner:CameraView 
@@ -16,11 +17,10 @@
         BarcodeSymbologies="All"
         x:Name="Scanner"/>
 
-        <Grid ColumnDefinitions="*, *, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,0.2">
-            <Button Text="Back" Grid.Column="0" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="BackButton_Clicked"/>
-            <Button Text="Camera" Grid.Column="1" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="CameraButton_Clicked"/>
-            <Button Text="Flash" Grid.Column="2" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="TorchButton_Clicked"/>
+        <Grid ColumnDefinitions="*, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,0.2">
+            <Button Text="Camera" Grid.Column="0" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="CameraButton_Clicked"/>
+            <Button Text="Flash" Grid.Column="1" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="TorchButton_Clicked"/>
         </Grid>
     </AbsoluteLayout>
 
-</ContentPage>
+</toolkit:Popup>
