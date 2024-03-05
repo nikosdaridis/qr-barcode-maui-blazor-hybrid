@@ -51,6 +51,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Fonts\Poppins-Regular.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="BarcodeScanning.Native.Maui" Version="1.2.4" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
@@ -63,9 +67,7 @@
 	</ItemGroup>
 
 	<ProjectExtensions>
-		<VisualStudio>
-			<UserProperties XamarinHotReloadDebuggerTimeoutExceptionQRBarcodeAppHideInfoBar="True" />
-		</VisualStudio>
+		<VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionQRBarcodeAppHideInfoBar="True" XamarinHotReloadGenericExceptionInfoBarQRBarcodeAppHideInfoBar="True" /></VisualStudio>
 	</ProjectExtensions>
 
 	<Target Name="CheckForNodeJs" BeforeTargets="CheckForNpm">

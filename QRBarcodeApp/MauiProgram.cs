@@ -15,7 +15,7 @@ namespace QRBarcodeApp
                 .UseMauiApp<App>()
                 .ConfigureFonts(fonts =>
                 {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("Poppins-Regular.ttf", "PoppinsRegular");
                 })
                 .UseMauiCommunityToolkit()
                 .UseBarcodeScanning();

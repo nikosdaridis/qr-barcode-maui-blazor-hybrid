@@ -1,0 +1,19 @@
+﻿<div class="tab-header p-3 grid justify-center fixed top-0 z-50 bg-[--primary-color] text-[--text-color] w-screen">
+    <div class="text-4xl font-bold">@Name</div>
+
+    @if (HandleInput.HasDelegate)
+    {
+        <input class="mt-4 w-[90vw] rounded-xl p-2 border border-input focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-[--primary-color] placeholder-gray-400" placeholder="@InputPlaceholder" @oninput="HandleInput" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string? Name { get; set; }
+
+    [Parameter]
+    public EventCallback<ChangeEventArgs> HandleInput { get; set; }
+
+    [Parameter]
+    public string? InputPlaceholder { get; set; }
+}

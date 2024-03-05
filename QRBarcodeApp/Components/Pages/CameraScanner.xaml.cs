@@ -28,7 +28,7 @@ public partial class CameraScanner : Popup
         if (!_scanned && e?.BarcodeResults?.FirstOrDefault() is not null)
         {
             _scanned = true;
-            string id = await _localStorageService.SaveQRAsync(e.BarcodeResults.First());
+            string id = await _localStorageService.SaveQRAsync(e.BarcodeResults.First(), "Scanned");
             await CloseAsync();
             _navigationManager.NavigateTo($"/scanresult/{id}");
         }

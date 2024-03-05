@@ -1,27 +1,33 @@
 ﻿@page "/history"
 
 @inject LocalStorageService LocalStorageService
+@inject IJSRuntime JSRuntime
 
-<h1>History</h1>
+<TabHeader Name="History" HandleInput="HandleInput" InputPlaceholder="Search History" />
 
-
-@if (_QRList?.Any() == true)
-{
-    @foreach (QRModel QR in _QRList)
+<div class="main-content grid gap-2 w-[90vw]">
+    @if (_QRListFiltered?.Any() == true)
     {
-        <h5>Value: @(QR?.Value ?? "")</h5>
-        <h5>Type: @(QR?.Type ?? "")</h5>
-        <h5>Format: @(QR?.Format ?? "")</h5>
-        <h5>Favorite: @(QR?.Favorite.ToString() ?? "")</h5>
+        @foreach (QRModel QR in _QRListFiltered)
+        {
+            <QRRectangle QR="@QR" />
+        }
     }
-}
-else
-{
-    <h3>No QR codes found</h3>
-}
+    else
+    {
+        <h1 class="mt-20 text-3xl font-bold">History is Empty</h1>
+    }
+</div>
 
 @code {
     private List<QRModel>? _QRList;
+    private List<QRModel>? _QRListFiltered;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
+    }
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -29,6 +35,17 @@ else
 
         await LocalStorageService.SaveActiveTabAsync("/history");
         _QRList = await LocalStorageService.GetQRAllAsync();
+        _QRListFiltered = _QRList;
         StateHasChanged();
+    }
+
+    private void HandleInput(ChangeEventArgs e)
+    {
+        string? searchInput = e.Value?.ToString();
+
+        if (!string.IsNullOrWhiteSpace(searchInput) && _QRList?.Any() == true)
+            _QRListFiltered = _QRList.Where(qr => qr?.Value is not null && qr.Value.Contains(searchInput, StringComparison.OrdinalIgnoreCase)).ToList();
+        else
+            _QRListFiltered = _QRList;
     }
 }

@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:QRBarcodeApp"
              xmlns:pages="clr-namespace:QRBarcodeApp.Components.Pages"
-             x:Class="QRBarcodeApp.MainPage"
-             BackgroundColor="{DynamicResource PageBackgroundColor}">
+             x:Class="QRBarcodeApp.MainPage">
 
     <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
         <BlazorWebView.RootComponents>
@@ -13,3 +12,4 @@
     </BlazorWebView>
 
 </ContentPage>
+    

@@ -1,10 +1,21 @@
 ﻿@page "/settings"
 
 @inject LocalStorageService LocalStorageService
+@inject IJSRuntime JSRuntime
 
-<h1>Settings</h1>
+<TabHeader Name="Settings" />
+
+<div class="main-content grid gap-2 w-[90vw]">
+    <h1>TODO</h1>
+</div>
 
 @code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
+    }
+
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         await base.SetParametersAsync(parameters);

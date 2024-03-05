@@ -1,0 +1,49 @@
+﻿@inject NavigationManager NavigationManager
+@inject LocalStorageService LocalStorageService
+
+@if (Href == "/scan")
+{
+    <div class="tab-bar-nav-link flex flex-1 items-center justify-center" @onclick="ShowCameraScannerPopupAsync">
+        <img class="h-[30px] w-[30px]" src="scan.svg" />
+    </div>
+}
+else
+{
+    <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href="@Href">
+        <img class="h-[30px] w-[30px] transition ease-in-out duration-300 @IsActiveTabAsync(Href)" src="@IconSrc" />
+    </NavLink>
+}
+
+@code {
+    [Parameter]
+    public string Href { get; set; } = "";
+
+    [Parameter]
+    public string IconSrc { get; set; } = "";
+
+    private bool _isPopupShown;
+
+
+    private async Task<string> IsActiveTabAsync(string tabName)
+    {
+        string activeTab = await LocalStorageService.GetActiveTabAsync();
+        return activeTab.Contains(tabName) ? "active" : "";
+    }
+
+    private async Task ShowCameraScannerPopupAsync()
+    {
+        if (_isPopupShown)
+            return;
+
+        _isPopupShown = true;
+
+        try
+        {
+            await App.Current!.MainPage!.ShowPopupAsync(new CameraScanner(NavigationManager, LocalStorageService));
+        }
+        finally
+        {
+            _isPopupShown = false;
+        }
+    }
+}

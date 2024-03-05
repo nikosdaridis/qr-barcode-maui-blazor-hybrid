@@ -8,6 +8,7 @@
         public string? Value { get; set; }
         public string? Type { get; set; }
         public string? Format { get; set; }
+        public string? Source { get; set; }
         public bool Favorite { get; set; }
     }
 }

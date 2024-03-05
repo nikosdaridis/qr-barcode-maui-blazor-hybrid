@@ -1,4 +1,4 @@
-﻿<nav class="flex justify-between fixed bottom-0 w-full h-[50px] bg-[#141414]">
+﻿<nav class="tab-bar flex justify-between fixed bottom-0 z-50 w-screen h-[50px] bg-[--primary-color]">
     @foreach (string tabName in new[] { "scan", "generate", "favorites", "history", "settings" })
     {
         <TabBarNavLink Href=@($"/{tabName}") IconSrc=@($"{tabName}.svg") />

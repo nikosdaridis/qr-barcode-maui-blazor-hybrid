@@ -27,13 +27,13 @@ namespace QRBarcodeApp.Services
             return await _localStorageService.GetItemAsync<List<QRModel>>("QRHistory") ?? [];
         }
 
-        public async Task<string> SaveQRAsync(BarcodeResult scanResult)
+        public async Task<string> SaveQRAsync(BarcodeResult scanResult, string source)
         {
             List<QRModel> qrHistory = await GetQRAllAsync();
 
             string type = scanResult.BarcodeType.ToString().Split('.').Last();
             string format = scanResult.BarcodeFormat.ToString().Split('.').Last();
-            QRModel? newQR = new QRModel { Value = scanResult.RawValue, Type = type, Format = format };
+            QRModel? newQR = new QRModel { Value = scanResult.RawValue, Type = type, Format = format, Source = source };
             qrHistory.Add(newQR);
             await _localStorageService.SetItemAsync("QRHistory", qrHistory);
 

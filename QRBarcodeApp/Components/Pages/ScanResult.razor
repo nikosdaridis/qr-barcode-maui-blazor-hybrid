@@ -3,16 +3,27 @@
 
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
+@inject IJSRuntime JSRuntime
 
-<h1>Value: @(_QR?.Value ?? "")</h1>
-<h1>Type: @(_QR?.Type ?? "")</h1>
-<h1>Format: @(_QR?.Format ?? "")</h1>
+<TabHeader Name="@($"Scanned {_QR?.Format}")" />
+
+<div class="main-content grid gap-2 w-[90vw]">
+    <h1>Value: @(_QR?.Value ?? "")</h1>
+    <h1>Type: @(_QR?.Type ?? "")</h1>
+    <h1>Format: @(_QR?.Format ?? "")</h1>
+</div>
 
 @code {
     [Parameter]
     public string? Id { get; set; }
 
     private QRModel? _QR;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
+    }
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
