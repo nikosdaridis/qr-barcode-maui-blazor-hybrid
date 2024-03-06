@@ -11,8 +11,6 @@ public partial class CameraScanner : Popup
     private readonly LocalStorageService _localStorageService;
 
     private bool _scanned;
-
-
     public CameraScanner(NavigationManager navigationManager, LocalStorageService localStorageService)
     {
         _navigationManager = navigationManager;

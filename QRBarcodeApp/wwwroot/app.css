@@ -98,8 +98,8 @@ h1:focus {
     filter: invert(60%) sepia(5%) saturate(200%) hue-rotate(177deg) brightness(88%) contrast(82%);
 }
 
-
 .tab-bar-nav-link.active img,
-.qr-rect-arrow {
+.qr-rect-arrow,
+.action-button img {
     filter: invert(54%) sepia(93%) saturate(4264%) hue-rotate(195deg) brightness(98%) contrast(109%);
 }

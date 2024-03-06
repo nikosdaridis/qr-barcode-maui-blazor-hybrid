@@ -5,12 +5,12 @@
 
 <TabHeader Name="History" HandleInput="HandleInput" InputPlaceholder="Search History" />
 
-<div class="main-content grid gap-2 w-[90vw]">
+<div class="main-content grid w-[90vw] gap-2">
     @if (_QRListFiltered?.Any() == true)
     {
         @foreach (QRModel QR in _QRListFiltered)
         {
-            <QRRectangle QR="@QR" />
+            <QRRectangle _QR="@QR" />
         }
     }
     else

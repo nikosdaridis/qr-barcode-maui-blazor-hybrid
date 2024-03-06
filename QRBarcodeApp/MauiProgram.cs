@@ -23,6 +23,7 @@ namespace QRBarcodeApp
             builder.Services.AddMauiBlazorWebView();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<LocalStorageService>();
+            builder.Services.AddScoped<QRService>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

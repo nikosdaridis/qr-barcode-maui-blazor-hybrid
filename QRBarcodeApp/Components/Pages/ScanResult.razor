@@ -3,14 +3,36 @@
 
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
+@inject QRService QRService
 @inject IJSRuntime JSRuntime
 
 <TabHeader Name="@($"Scanned {_QR?.Format}")" />
 
-<div class="main-content grid gap-2 w-[90vw]">
-    <h1>Value: @(_QR?.Value ?? "")</h1>
-    <h1>Type: @(_QR?.Type ?? "")</h1>
-    <h1>Format: @(_QR?.Format ?? "")</h1>
+
+<div class="main-content flex w-[90vw] flex-col items-center gap-4">
+    @if (_QR is not null)
+    {
+        <h2 class="text-2xl font-semibold text-[--highlight-color]">@_QR.Type</h2>
+
+        @if (_QR.Format == BarcodeFormats.QRCode.ToString() && !string.IsNullOrWhiteSpace(_qrImageBase64))
+        {
+            <img class="w-[70vw] rounded-xl" src="@_qrImageBase64" />
+        }
+
+        <div class="flex w-[90vw] items-center justify-center gap-4 text-center">
+            <ActionRoundButton IconPath=@($"{(_QR.Favorite ?? false ? "" : "not-")}favorite.svg")
+                               Text="@((MarkupString)$"{(_QR.Favorite ?? false ? "Remove from" : "Add to")}<br />Favorites")"
+                               HandleClick=@(async () => await ToggleFavoriteOnClick()) />
+
+            @if (_QR.Format == BarcodeFormats.QRCode.ToString())
+            {
+                <ActionRoundButton IconPath="image.svg" Text="@((MarkupString)"Save To<br />Gallery")" HandleClick=@(async () => await QRService.SaveQRToGalleryAsync(_qrBytes)) />
+                <ActionRoundButton IconPath="share.svg" Text="@((MarkupString)"Share<br />Code")" HandleClick=@(async () => await QRService.ShareQRAsync(_qrBytes)) />
+            }
+        </div>
+
+        <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@(_QR?.Value)</h2>
+    }
 </div>
 
 @code {
@@ -18,6 +40,10 @@
     public string? Id { get; set; }
 
     private QRModel? _QR;
+    private byte[] _qrBytes = [];
+    private string? _qrImageBase64;
+    private bool _showSaveToHistoryButton;
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -32,7 +58,10 @@
         if (Id is null)
         {
             if (await LocalStorageService.GetActiveTabAsync() == "/scanresult")
+            {
                 NavigationManager.NavigateTo("/history");
+                return;
+            }
             else
                 App.Current!.MainPage!.ShowPopup(new CameraScanner(NavigationManager, LocalStorageService));
         }
@@ -40,6 +69,18 @@
         await LocalStorageService.SaveActiveTabAsync("/scanresult");
 
         _QR = await LocalStorageService.GetQRAsync(Id!);
+        _qrBytes = QRService.GenerateQRBytes(_QR?.Value);
+        _qrImageBase64 = QRService.GetQRBase64(_qrBytes);
+        _showSaveToHistoryButton = !await QRService.QRExistsInHistoryAsync(_QR?.Value);
+
+        StateHasChanged();
+    }
+
+    private async Task ToggleFavoriteOnClick()
+    {
+        _QR = await QRService.ToggleQRFavoriteAsync(_QR!.Id, new QRModel { Favorite = !_QR.Favorite });
+        await Toast.Make($"{(_QR?.Favorite ?? false ? "Added to" : "Removed from")} Favorites").Show();
+
         StateHasChanged();
     }
 }

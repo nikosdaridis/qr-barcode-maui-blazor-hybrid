@@ -1,6 +1,7 @@
 ﻿using BarcodeScanning;
 using Blazored.LocalStorage;
 using QRBarcodeApp.Models;
+using System.Reflection;
 
 namespace QRBarcodeApp.Services
 {
@@ -33,11 +34,42 @@ namespace QRBarcodeApp.Services
 
             string type = scanResult.BarcodeType.ToString().Split('.').Last();
             string format = scanResult.BarcodeFormat.ToString().Split('.').Last();
-            QRModel? newQR = new QRModel { Value = scanResult.RawValue, Type = type, Format = format, Source = source };
+            QRModel? newQR = new QRModel { Value = scanResult.RawValue, Type = type, Format = format, Source = source, Favorite = false };
             qrHistory.Add(newQR);
             await _localStorageService.SetItemAsync("QRHistory", qrHistory);
 
             return newQR.Id;
+        }
+
+        public async Task<QRModel?> UpdateQRAsync(string? id, QRModel updatedQR)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return null;
+
+            List<QRModel> qrHistory = await GetQRAllAsync();
+            QRModel? qrToUpdate = qrHistory.FirstOrDefault(qr => qr.Id == id);
+
+            if (qrToUpdate is null)
+                return null;
+
+            foreach (PropertyInfo property in updatedQR.GetType().GetProperties())
+            {
+                if (property.Name == "Id" || property.Name == "DateTime")
+                    continue;
+
+                object? newValue = property.GetValue(updatedQR);
+
+                if (newValue is not null)
+                {
+                    PropertyInfo? propertyToUpdate = qrToUpdate.GetType().GetProperty(property.Name);
+
+                    if (propertyToUpdate is not null)
+                        propertyToUpdate.SetValue(qrToUpdate, newValue);
+                }
+            }
+
+            await _localStorageService.SetItemAsync("QRHistory", qrHistory);
+            return qrToUpdate;
         }
 
         public async Task<string> GetActiveTabAsync()

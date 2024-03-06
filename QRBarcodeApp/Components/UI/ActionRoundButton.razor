@@ -1,0 +1,22 @@
+﻿<div>
+    <button class="action-button rounded-full bg-[--primary-color] p-3" @onclick=HandleClick>
+        <img class="h-[30px] w-[30px]" src="@IconPath" />
+    </button>
+    <h3 class="mt-2 text-sm">@Text</h3>
+</div>
+
+@code {
+    [Parameter]
+    public string? IconPath { get; set; }
+
+    [Parameter]
+    public MarkupString? Text { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> HandleClick { get; set; }
+
+    private async Task OnButtonClickAsync(MouseEventArgs e)
+    {
+        await HandleClick.InvokeAsync(e);
+    }
+}

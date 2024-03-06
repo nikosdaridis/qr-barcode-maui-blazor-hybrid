@@ -11,11 +11,18 @@
 1. UI
 2. Settings
 
-<img alt="Screenshot" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot1.png>
-<img alt="Screenshot" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot2.png>
+<img alt="Screenshot" height="300" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot1.png>
+<img alt="Screenshot" height="300" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot2.png>
+<img alt="Screenshot" height="300" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot3.png>
 
 ## 🛠 Installation
 
 1. Node.js and npm has to be installed for Tailwind to build CSS
 
 2. Launch with Emulator or Local Device
+
+3. Open a terminal and run this to watch for Tailwind changes
+
+   ```sh
+   npm run watch
+   ```

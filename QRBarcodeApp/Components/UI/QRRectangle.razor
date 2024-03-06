@@ -1,14 +1,15 @@
-﻿<div class="flex justify-between items-center bg-[#1F1F1F] p-3 rounded-xl w-[90vw]">
-    <div class="grid overflow-hidden text-sm">
-        <h2 class="text-left text-white font-semibold">@QR?.Value</h2>
-        <div class="flex mt-2 gap-4 text-gray-500">
+﻿<div class="flex w-[90vw] items-center justify-between rounded-xl bg-[#1F1F1F] p-3">
+    <div class="grid text-sm">
+        <h2 class="max-w-[70vw] break-words text-left font-semibold">@QR?.Value</h2>
+        <div class="mt-2 flex gap-4 text-gray-500">
             <h2>@QR?.Format</h2>
             <h2>@QR?.Type</h2>
+            <h2>@QR?.Source</h2>
+            <img class="qr-rect-arrow h-[15px] w-[15px]" src="@($"{(QR?.Favorite ?? false ? "" : "not-")}favorite.svg")" />
         </div>
     </div>
     <div class="grid place-items-end text-sm">
         <img class="qr-rect-arrow h-[30px] w-[30px]" src="arrow.svg" />
-        <h2 class="text-gray-500">@QR?.Source</h2>
     </div>
 </div>
 

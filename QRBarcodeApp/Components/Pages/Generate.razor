@@ -2,22 +2,23 @@
 @page "/generate/{QRText}"
 
 @inject LocalStorageService LocalStorageService
+@inject QRService QRService
 @inject IJSRuntime JSRuntime
 
-<TabHeader Name="Generate" HandleInput="HandleInput" InputPlaceholder="Enter Text" />
+<TabHeader Name="Generate" HandleInput="HandleInputAsync" InputPlaceholder="Enter Text" />
 
-<div class="main-content flex flex-col items-center gap-4 w-[90vw]">
-    @if (_QRImageBase64 is not null)
+<div class="main-content flex w-[90vw] flex-col items-center gap-4">
+    @if (_qrImageBase64 is not null)
     {
-        <img class="w-[70vw] rounded-xl" src="@_QRImageBase64" />
+        <img class="w-[70vw] rounded-xl" src="@_qrImageBase64" />
 
-        <div class="grid gap-4 text-lg font-semibold w-[50vw]">
-            <button class="p-3 bg-blue-500" @onclick="SaveQRAsync">Save To Gallery</button>
-            <button class="p-3 bg-emerald-500" @onclick="ShareQRAsync">Share Image</button>
+        <div class="grid w-[50vw] gap-4 text-lg font-semibold">
+            <button class="bg-blue-500 p-3" @onclick="() => QRService.SaveQRToGalleryAsync(_qrBytes)">Save To Gallery</button>
+            <button class="bg-emerald-500 p-3" @onclick="() => QRService.ShareQRAsync(_qrBytes)">Share Image</button>
 
             @if (_showSaveToHistoryButton)
             {
-                <button class="p-3 bg-orange-600" @onclick="SaveQRToHistoryAsync">Save To History</button>
+                <button class="bg-orange-600 p-3" @onclick="HandleSaveToHistoryAsync">Save To History</button>
             }
         </div>
     }
@@ -27,8 +28,8 @@
     [Parameter]
     public string? QRText { get; set; }
 
-    private byte[]? _QRBytes;
-    private string? _QRImageBase64;
+    private byte[] _qrBytes = [];
+    private string? _qrImageBase64;
     private bool _showSaveToHistoryButton;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -42,79 +43,18 @@
         await LocalStorageService.SaveActiveTabAsync("/generate");
     }
 
-    private void HandleInput(ChangeEventArgs e)
+    private async Task HandleInputAsync(ChangeEventArgs e)
     {
-        string? searchInput = e.Value?.ToString();
-
         QRText = e.Value?.ToString();
-        GenerateQRCodeAsync();
-    }
-
-    private async void GenerateQRCodeAsync()
-    {
-        if (string.IsNullOrWhiteSpace(QRText))
-        {
-            _QRBytes = null;
-            _QRImageBase64 = null;
-            return;
-        }
-
-        QRCodeGenerator qrGenerator = new QRCodeGenerator();
-        QRCodeData qrCodeData = qrGenerator.CreateQrCode(QRText, QRCodeGenerator.ECCLevel.L);
-
-        PngByteQRCode qRCode = new PngByteQRCode(qrCodeData);
-
-        _QRBytes = qRCode.GetGraphic(20);
-        _QRImageBase64 = $"data:image/png;base64,{Convert.ToBase64String(_QRBytes)}";
-        _showSaveToHistoryButton = !await QRExistsInHistoryAsync();
+        _qrBytes = QRService.GenerateQRBytes(QRText);
+        _qrImageBase64 = QRService.GetQRBase64(_qrBytes);
+        _showSaveToHistoryButton = !await QRService.QRExistsInHistoryAsync(QRText);
 
         StateHasChanged();
     }
 
-    private async void SaveQRAsync()
+    private async Task HandleSaveToHistoryAsync()
     {
-        if (_QRBytes is null)
-            return;
-
-        await MediaGallery.SaveAsync(MediaFileType.Image, _QRBytes, "QR.png");
-
-        IToast toast = Toast.Make("Saved to Gallery", ToastDuration.Short, 14);
-        await toast.Show();
-    }
-
-    private async void ShareQRAsync()
-    {
-        if (_QRBytes is null)
-            return;
-
-        string path = FileSystem.Current.CacheDirectory;
-        string fileName = "QRCode.png";
-        string fullPath = Path.Combine(path, fileName);
-
-        await File.WriteAllBytesAsync(fullPath, _QRBytes);
-        string file = Path.Combine(FileSystem.CacheDirectory, fileName);
-
-        await Share.Default.RequestAsync(new ShareFileRequest
-            {
-                Title = "Share QR Code",
-                File = new ShareFile(file)
-            });
-    }
-
-    private async Task SaveQRToHistoryAsync()
-    {
-        BarcodeResult QR = new BarcodeResult() { RawValue = QRText, BarcodeType = BarcodeTypes.Text, BarcodeFormat = BarcodeFormats.QRCode };
-        await LocalStorageService.SaveQRAsync(QR, "Generated");
-        _showSaveToHistoryButton = false;
-
-        IToast toast = Toast.Make("Saved to History", ToastDuration.Short, 14);
-        await toast.Show();
-    }
-
-    private async Task<bool> QRExistsInHistoryAsync()
-    {
-        List<QRModel> QRHistory = await LocalStorageService.GetQRAllAsync();
-
-        return QRHistory.Any(qr => qr.Value == QRText);
+        _showSaveToHistoryButton = !await QRService.SaveQRToHistoryAsync(QRText);
     }
 }
