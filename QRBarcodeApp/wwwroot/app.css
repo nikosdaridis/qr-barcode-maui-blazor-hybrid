@@ -103,3 +103,17 @@ h1:focus {
 .action-button img {
     filter: invert(54%) sepia(93%) saturate(4264%) hue-rotate(195deg) brightness(98%) contrast(109%);
 }
+
+.share-button img {
+    filter: invert(71%) sepia(68%) saturate(5326%) hue-rotate(78deg) brightness(124%) contrast(118%);
+}
+
+
+.delete-button img {
+    filter: invert(11%) sepia(100%) saturate(7439%) hue-rotate(1deg) brightness(110%) contrast(109%);
+}
+
+.favorite-button img,
+.favorite-icon {
+    filter: invert(13%) sepia(81%) saturate(7468%) hue-rotate(327deg) brightness(107%) contrast(102%);
+}

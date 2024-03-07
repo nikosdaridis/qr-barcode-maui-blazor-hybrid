@@ -1,33 +1,38 @@
 ﻿@inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
 
-@if (Href == "/scan")
+@if (TabName == "scan")
 {
     <div class="tab-bar-nav-link flex flex-1 items-center justify-center" @onclick="ShowCameraScannerPopupAsync">
-        <img class="h-[30px] w-[30px]" src="scan.svg" />
+        <img class="h-[30px] w-[30px]" src="icons/scan.svg" />
     </div>
 }
-else
+else if (!string.IsNullOrWhiteSpace(TabName) && !string.IsNullOrWhiteSpace(_activeTab))
 {
-    <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href="@Href">
-        <img class="@IsActiveTabAsync(Href!) h-[30px] w-[30px] transition duration-300 ease-in-out" src="@IconSrc" />
+    <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href="@($"/{TabName}")">
+        <img class="@(_activeTab.Contains(TabName) ?"active" : "") h-[30px] w-[30px] transition duration-300 ease-in-out"
+             src="@($"icons/{TabName}{(_activeTab!.Contains(TabName) ? "-active" : "")}.svg")" />
     </NavLink>
 }
 
 @code {
     [Parameter]
-    public string? Href { get; set; }
+    public string? TabName { get; set; }
 
-    [Parameter]
-    public string? IconSrc { get; set; }
-
+    private string? _activeTab;
     private bool _isPopupShown;
 
-
-    private async Task<string> IsActiveTabAsync(string tabName)
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
-        string activeTab = await LocalStorageService.GetActiveTabAsync();
-        return activeTab.Contains(tabName) ? "active" : "";
+        await base.SetParametersAsync(parameters);
+
+        string currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        int indexOfSlash = currentUrl.IndexOf('/');
+
+        if (indexOfSlash != -1)
+            _activeTab = currentUrl.Substring(0, indexOfSlash);
+        else
+            _activeTab = currentUrl;
     }
 
     private async Task ShowCameraScannerPopupAsync()

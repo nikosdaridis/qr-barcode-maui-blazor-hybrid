@@ -14,13 +14,22 @@ namespace QRBarcodeApp.Services
             _localStorageService = localStorageService;
         }
 
-        public async Task<QRModel?> GetQRAsync(string id)
+        public async Task<QRModel?> GetQRByIdAsync(string? id)
         {
             if (string.IsNullOrWhiteSpace(id))
                 return null;
 
             List<QRModel> qrHistory = await GetQRAllAsync();
             return qrHistory.FirstOrDefault(qr => qr.Id == id);
+        }
+
+        public async Task<QRModel?> GetQRByValueAsync(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+
+            List<QRModel> qrHistory = await GetQRAllAsync();
+            return qrHistory.FirstOrDefault(qr => qr.Value == value);
         }
 
         public async Task<List<QRModel>> GetQRAllAsync()
@@ -70,6 +79,24 @@ namespace QRBarcodeApp.Services
 
             await _localStorageService.SetItemAsync("QRHistory", qrHistory);
             return qrToUpdate;
+        }
+
+        public async Task<bool> DeleteQRAsync(string? id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return false;
+
+            List<QRModel> qrHistory = await GetQRAllAsync();
+
+            QRModel? qrToDelete = qrHistory.FirstOrDefault(qr => qr.Id == id);
+
+            if (qrToDelete is null)
+                return false;
+
+            qrHistory.Remove(qrToDelete);
+            await _localStorageService.SetItemAsync("QRHistory", qrHistory);
+
+            return true;
         }
 
         public async Task<string> GetActiveTabAsync()

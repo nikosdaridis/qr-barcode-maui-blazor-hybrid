@@ -1,6 +1,7 @@
 using BarcodeScanning;
 using CommunityToolkit.Maui.Views;
 using Microsoft.AspNetCore.Components;
+using QRBarcodeApp.Models;
 using QRBarcodeApp.Services;
 
 namespace QRBarcodeApp.Components.Pages;
@@ -26,9 +27,17 @@ public partial class CameraScanner : Popup
         if (!_scanned && e?.BarcodeResults?.FirstOrDefault() is not null)
         {
             _scanned = true;
-            string id = await _localStorageService.SaveQRAsync(e.BarcodeResults.First(), "Scanned");
+
+            QRModel? qrExists = await _localStorageService.GetQRByValueAsync(e.BarcodeResults.First().RawValue);
             await CloseAsync();
-            _navigationManager.NavigateTo($"/scanresult/{id}");
+
+            if (qrExists is null)
+            {
+                string id = await _localStorageService.SaveQRAsync(e.BarcodeResults.First(), "Scanned");
+                _navigationManager.NavigateTo($"/scanresult/{id}");
+            }
+            else
+                _navigationManager.NavigateTo($"/scanresult/{qrExists.Id}");
         }
     }
 

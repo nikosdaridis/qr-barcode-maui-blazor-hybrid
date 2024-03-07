@@ -8,28 +8,46 @@
 <TabHeader Name="Generate" HandleInput="HandleInputAsync" InputPlaceholder="Enter Text" />
 
 <div class="main-content flex w-[90vw] flex-col items-center gap-4">
-    @if (_qrImageBase64 is not null)
+    @if (!string.IsNullOrWhiteSpace(QRText))
     {
+        <h2 class="text-2xl font-semibold text-[--highlight-color]">@QRService.GetQRType(QRText)</h2>
+
         <img class="w-[70vw] rounded-xl" src="@_qrImageBase64" />
 
-        <div class="grid w-[50vw] gap-4 text-lg font-semibold">
-            <button class="bg-blue-500 p-3" @onclick="() => QRService.SaveQRToGalleryAsync(_qrBytes)">Save To Gallery</button>
-            <button class="bg-emerald-500 p-3" @onclick="() => QRService.ShareQRAsync(_qrBytes)">Share Image</button>
+        <div class="flex w-[90vw] items-center justify-center gap-4 text-center">
 
             @if (_showSaveToHistoryButton)
             {
-                <button class="bg-orange-600 p-3" @onclick="HandleSaveToHistoryAsync">Save To History</button>
+                <RoundButton IconPath="icons/history.svg"
+                             Text="@((MarkupString)"Save To<br />History")"
+                             HandleClick=@(async () => await HandleSaveToHistoryAsync()) />
             }
+            else if (_savedQR is not null)
+            {
+                <RoundButton IconPath=@($"icons/{(_savedQR.Favorite ?? false ? "" : "not-")}favorite.svg")
+                             Text="@((MarkupString)$"{(_savedQR.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")"
+                             HandleClick=@(async () => await ToggleFavoriteAsync()) />
+            }
+
+            <RoundButton IconPath="icons/image.svg"
+                         Text="@((MarkupString)"Save To<br />Gallery")"
+                         HandleClick=@(async () => await QRService.SaveQRToGalleryAsync(_qrBytes, "QRCode" )) />
+
+            <RoundButton IconPath="icons/share.svg"
+                         Text="@((MarkupString)"Share<br />QRCode")"
+                         HandleClick=@(async () => await QRService.ShareQRAsync(_qrBytes, "QRCode")) />
         </div>
     }
 </div>
 
+<TabBar />
+
 @code {
     [Parameter]
     public string? QRText { get; set; }
-
     private byte[] _qrBytes = [];
     private string? _qrImageBase64;
+    private QRModel? _savedQR;
     private bool _showSaveToHistoryButton;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -46,6 +64,7 @@
     private async Task HandleInputAsync(ChangeEventArgs e)
     {
         QRText = e.Value?.ToString();
+        _savedQR = await LocalStorageService.GetQRByValueAsync(QRText);
         _qrBytes = QRService.GenerateQRBytes(QRText);
         _qrImageBase64 = QRService.GetQRBase64(_qrBytes);
         _showSaveToHistoryButton = !await QRService.QRExistsInHistoryAsync(QRText);
@@ -55,6 +74,21 @@
 
     private async Task HandleSaveToHistoryAsync()
     {
-        _showSaveToHistoryButton = !await QRService.SaveQRToHistoryAsync(QRText);
+        string? id = await QRService.SaveQRToHistoryAsync(QRText);
+
+        if (id is null)
+            return;
+        else
+            _showSaveToHistoryButton = false;
+
+        _savedQR = await LocalStorageService.GetQRByIdAsync(id);
+    }
+
+    private async Task ToggleFavoriteAsync()
+    {
+        _savedQR = await QRService.ToggleQRFavoriteAsync(_savedQR!.Id, new QRModel { Favorite = !_savedQR.Favorite });
+        await Toast.Make($"{(_savedQR?.Favorite ?? false ? "Added to" : "Removed from")} Favorites").Show();
+
+        StateHasChanged();
     }
 }

@@ -1,15 +1,31 @@
 ﻿@page "/favorites"
 
+@inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
 @inject IJSRuntime JSRuntime
 
-<TabHeader Name="Favorites" />
+<TabHeader Name="Favorites" HandleInput="HandleInput" InputPlaceholder="Search Favorites" />
 
 <div class="main-content grid w-[90vw] gap-2">
-    <h1>TODO</h1>
+    @if (_qrListFiltered?.Any() == true)
+    {
+        @foreach (QRModel qr in _qrListFiltered)
+        {
+            <QRRectangle QR="@qr" HandleClick='() => NavigationManager.NavigateTo($"/edit/{qr.Id}")' />
+        }
+    }
+    else
+    {
+        <h1 class="mt-20 text-3xl font-bold">Favorites are Empty</h1>
+    }
 </div>
 
+<TabBar />
+
 @code {
+    private List<QRModel>? _qrList;
+    private List<QRModel>? _qrListFiltered;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -21,6 +37,19 @@
         await base.SetParametersAsync(parameters);
 
         await LocalStorageService.SaveActiveTabAsync("/favorites");
+        _qrList = (await LocalStorageService.GetQRAllAsync()).Where(qr => qr.Favorite == true).ToList();
+        _qrListFiltered = _qrList;
+
         StateHasChanged();
+    }
+
+    private void HandleInput(ChangeEventArgs e)
+    {
+        string? searchInput = e.Value?.ToString();
+
+        if (!string.IsNullOrWhiteSpace(searchInput) && _qrList?.Any() == true)
+            _qrListFiltered = _qrList.Where(qr => qr?.Value is not null && qr.Value.Contains(searchInput, StringComparison.OrdinalIgnoreCase)).ToList();
+        else
+            _qrListFiltered = _qrList;
     }
 }

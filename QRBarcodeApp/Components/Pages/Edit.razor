@@ -1,5 +1,4 @@
-﻿@page "/scanresult"
-@page "/scanresult/{Id}"
+﻿@page "/edit/{Id}"
 
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
@@ -32,6 +31,9 @@
                              Text="@((MarkupString)$"Share<br />{_qr.Format}")"
                              HandleClick=@(async () => await QRService.ShareQRAsync(_qrBytes, _qr.Format)) />
             }
+            <RoundButton IconPath="icons/delete.svg"
+                         Text="@((MarkupString)$"Delete<br />{_qr.Format}")"
+                         HandleClick=@(async () => await QRService.DeleteQRFromHistoryAsync(_qr)) />
         </div>
 
         <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@(_qr?.Value)</h2>
@@ -47,7 +49,6 @@
     private QRModel? _qr;
     private byte[] _qrBytes = [];
     private string? _qrImageBase64;
-    private bool _showSaveToHistoryButton;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -59,19 +60,6 @@
     {
         await base.SetParametersAsync(parameters);
 
-        if (Id is null)
-        {
-            if (await LocalStorageService.GetActiveTabAsync() == "/scanresult")
-            {
-                NavigationManager.NavigateTo("/history");
-                return;
-            }
-            else
-                App.Current!.MainPage!.ShowPopup(new CameraScanner(NavigationManager, LocalStorageService));
-        }
-
-        await LocalStorageService.SaveActiveTabAsync("/scanresult");
-
         _qr = await LocalStorageService.GetQRByIdAsync(Id!);
 
         if (_qr is not null && _qr.Format == BarcodeFormats.QRCode.ToString())
@@ -79,7 +67,6 @@
             _qrBytes = QRService.GenerateQRBytes(_qr?.Value);
             _qrImageBase64 = QRService.GetQRBase64(_qrBytes);
         }
-        _showSaveToHistoryButton = !await QRService.QRExistsInHistoryAsync(_qr?.Value);
 
         StateHasChanged();
     }

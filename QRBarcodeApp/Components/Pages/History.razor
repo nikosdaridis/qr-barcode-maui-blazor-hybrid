@@ -1,16 +1,17 @@
 ﻿@page "/history"
 
+@inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
 @inject IJSRuntime JSRuntime
 
 <TabHeader Name="History" HandleInput="HandleInput" InputPlaceholder="Search History" />
 
 <div class="main-content grid w-[90vw] gap-2">
-    @if (_QRListFiltered?.Any() == true)
+    @if (_qrListFiltered?.Any() == true)
     {
-        @foreach (QRModel QR in _QRListFiltered)
+        @foreach (QRModel qr in _qrListFiltered)
         {
-            <QRRectangle _QR="@QR" />
+            <QRRectangle QR="@qr" HandleClick='() => NavigationManager.NavigateTo($"/edit/{qr.Id}")' />
         }
     }
     else
@@ -19,9 +20,11 @@
     }
 </div>
 
+<TabBar />
+
 @code {
-    private List<QRModel>? _QRList;
-    private List<QRModel>? _QRListFiltered;
+    private List<QRModel>? _qrList;
+    private List<QRModel>? _qrListFiltered;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -34,8 +37,9 @@
         await base.SetParametersAsync(parameters);
 
         await LocalStorageService.SaveActiveTabAsync("/history");
-        _QRList = await LocalStorageService.GetQRAllAsync();
-        _QRListFiltered = _QRList;
+        _qrList = await LocalStorageService.GetQRAllAsync();
+        _qrListFiltered = _qrList;
+
         StateHasChanged();
     }
 
@@ -43,9 +47,9 @@
     {
         string? searchInput = e.Value?.ToString();
 
-        if (!string.IsNullOrWhiteSpace(searchInput) && _QRList?.Any() == true)
-            _QRListFiltered = _QRList.Where(qr => qr?.Value is not null && qr.Value.Contains(searchInput, StringComparison.OrdinalIgnoreCase)).ToList();
+        if (!string.IsNullOrWhiteSpace(searchInput) && _qrList?.Any() == true)
+            _qrListFiltered = _qrList.Where(qr => qr?.Value is not null && qr.Value.Contains(searchInput, StringComparison.OrdinalIgnoreCase)).ToList();
         else
-            _QRListFiltered = _QRList;
+            _qrListFiltered = _qrList;
     }
 }

@@ -1,5 +1,6 @@
 ﻿<div>
-    <button class="action-button rounded-full bg-[--primary-color] p-3" @onclick=HandleClick>
+    <button class="@($"{(IconPath!.Contains("share") ? "share" : IconPath!.Contains("favorite") ? "favorite" : IconPath!.Contains("delete") ? "delete" : "action")}-button") rounded-full bg-[--primary-color] p-3"
+            @onclick="HandleClick">
         <img class="h-[30px] w-[30px]" src="@IconPath" />
     </button>
     <h3 class="mt-2 text-sm">@Text</h3>
@@ -14,9 +15,4 @@
 
     [Parameter]
     public EventCallback<MouseEventArgs> HandleClick { get; set; }
-
-    private async Task OnButtonClickAsync(MouseEventArgs e)
-    {
-        await HandleClick.InvokeAsync(e);
-    }
 }
