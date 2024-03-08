@@ -1,10 +1,14 @@
 ﻿using BarcodeScanning;
+using BarcodeStandard;
 using CommunityToolkit.Maui.Alerts;
 using Microsoft.AspNetCore.Components;
 using NativeMedia;
+using QRBarcodeApp.Helpers;
 using QRBarcodeApp.Models;
 using QRCoder;
+using SkiaSharp;
 using System.Text.RegularExpressions;
+using BarcodeType = BarcodeStandard.Type;
 
 namespace QRBarcodeApp.Services
 {
@@ -105,6 +109,28 @@ namespace QRBarcodeApp.Services
                 return "";
 
             return $"data:image/png;base64,{Convert.ToBase64String(qrBytes)}";
+        }
+
+        public void GenerateBytesAndImage(QRModel? qr, ref byte[] scannedBytes, ref string? imageBase64)
+        {
+            if (qr is not null)
+            {
+                BarcodeType barcodeType = BarcodeTypeMapper.MapScanFormatToBarcodeType(qr.Format);
+
+                if (barcodeType != BarcodeType.Unspecified)
+                {
+                    Barcode barcode = new Barcode(qr.Value, barcodeType);
+                    barcode.IncludeLabel = true;
+                    SKImage barcodeImage = barcode.Encode(barcodeType, qr.Value);
+                    scannedBytes = barcodeImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
+                }
+                else
+                {
+                    scannedBytes = GenerateQRBytes(qr?.Value);
+                }
+
+                imageBase64 = GetQRBase64(scannedBytes);
+            }
         }
 
         public BarcodeTypes GetQRType(string? qrText)

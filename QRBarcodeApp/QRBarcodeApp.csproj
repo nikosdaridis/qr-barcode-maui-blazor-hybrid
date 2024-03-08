@@ -55,7 +55,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BarcodeScanning.Native.Maui" Version="1.2.4" />
+		<PackageReference Include="BarcodeLib" Version="3.0.3" />
+		<PackageReference Include="BarcodeScanning.Native.Maui" Version="1.2.5" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="7.0.1" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.7" />

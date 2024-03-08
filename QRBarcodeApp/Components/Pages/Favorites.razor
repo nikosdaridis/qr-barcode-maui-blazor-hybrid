@@ -7,16 +7,20 @@
 <TabHeader Name="Favorites" HandleInput="HandleInput" InputPlaceholder="Search Favorites" />
 
 <div class="main-content grid w-[90vw] gap-2">
-    @if (_qrListFiltered?.Any() == true)
+    @if (!_isLoading)
     {
-        @foreach (QRModel qr in _qrListFiltered)
+        @if (_qrListFiltered?.Any() == true)
         {
-            <QRRectangle QR="@qr" HandleClick='() => NavigationManager.NavigateTo($"/edit/{qr.Id}")' />
+            @foreach (QRModel qr in _qrListFiltered)
+            {
+                <QRRectangle QR="@qr" HandleClick='() => NavigationManager.NavigateTo($"/details/{qr.Id}")' />
+            }
+
         }
-    }
-    else
-    {
-        <h1 class="mt-20 text-3xl font-bold">Favorites are Empty</h1>
+        else
+        {
+            <h1 class="mt-20 text-3xl font-bold">No Favorites</h1>
+        }
     }
 </div>
 
@@ -25,6 +29,7 @@
 @code {
     private List<QRModel>? _qrList;
     private List<QRModel>? _qrListFiltered;
+    private bool _isLoading = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -34,12 +39,14 @@
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
+        _isLoading = true;
         await base.SetParametersAsync(parameters);
 
         await LocalStorageService.SaveActiveTabAsync("/favorites");
         _qrList = (await LocalStorageService.GetQRAllAsync()).Where(qr => qr.Favorite == true).ToList();
         _qrListFiltered = _qrList;
 
+        _isLoading = false;
         StateHasChanged();
     }
 

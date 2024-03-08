@@ -13,9 +13,9 @@
     {
         <h2 class="text-2xl font-semibold text-[--highlight-color]">@_qr.Type</h2>
 
-        @if (_qr.Format == BarcodeFormats.QRCode.ToString() && !string.IsNullOrWhiteSpace(_qrImageBase64))
+        @if (!string.IsNullOrWhiteSpace(_imageBase64))
         {
-            <img class="w-[70vw] rounded-xl" src="@_qrImageBase64" />
+            <img class="w-[70vw] rounded-xl" src="@_imageBase64" />
         }
 
         <div class="flex w-[90vw] items-center justify-center gap-4 text-center">
@@ -23,14 +23,14 @@
                          Text="@((MarkupString)$"{(_qr.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")"
                          HandleClick=@(async () => await ToggleFavoriteAsync()) />
 
-            @if (_qr.Format == BarcodeFormats.QRCode.ToString() && _qrBytes.Any())
+            @if (_scannedBytes.Any())
             {
                 <RoundButton IconPath="icons/image.svg"
                              Text="@((MarkupString)"Save To<br />Gallery")"
-                             HandleClick=@(async () => await QRService.SaveQRToGalleryAsync(_qrBytes, _qr.Format)) />
+                             HandleClick=@(async () => await QRService.SaveQRToGalleryAsync(_scannedBytes, _qr.Format)) />
                 <RoundButton IconPath="icons/share.svg"
                              Text="@((MarkupString)$"Share<br />{_qr.Format}")"
-                             HandleClick=@(async () => await QRService.ShareQRAsync(_qrBytes, _qr.Format)) />
+                             HandleClick=@(async () => await QRService.ShareQRAsync(_scannedBytes, _qr.Format)) />
             }
         </div>
 
@@ -45,8 +45,8 @@
     public string? Id { get; set; }
 
     private QRModel? _qr;
-    private byte[] _qrBytes = [];
-    private string? _qrImageBase64;
+    private byte[] _scannedBytes = [];
+    private string? _imageBase64;
     private bool _showSaveToHistoryButton;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -74,11 +74,8 @@
 
         _qr = await LocalStorageService.GetQRByIdAsync(Id!);
 
-        if (_qr is not null && _qr.Format == BarcodeFormats.QRCode.ToString())
-        {
-            _qrBytes = QRService.GenerateQRBytes(_qr?.Value);
-            _qrImageBase64 = QRService.GetQRBase64(_qrBytes);
-        }
+        QRService.GenerateBytesAndImage(_qr, ref _scannedBytes, ref _imageBase64);
+
         _showSaveToHistoryButton = !await QRService.QRExistsInHistoryAsync(_qr?.Value);
 
         StateHasChanged();

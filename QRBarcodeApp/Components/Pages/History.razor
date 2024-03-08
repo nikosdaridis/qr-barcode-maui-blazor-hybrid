@@ -7,16 +7,20 @@
 <TabHeader Name="History" HandleInput="HandleInput" InputPlaceholder="Search History" />
 
 <div class="main-content grid w-[90vw] gap-2">
-    @if (_qrListFiltered?.Any() == true)
+    @if (!_isLoading)
     {
-        @foreach (QRModel qr in _qrListFiltered)
+        @if (_qrListFiltered?.Any() == true)
         {
-            <QRRectangle QR="@qr" HandleClick='() => NavigationManager.NavigateTo($"/edit/{qr.Id}")' />
+            @foreach (QRModel qr in _qrListFiltered)
+            {
+                <QRRectangle QR="@qr" HandleClick='() => NavigationManager.NavigateTo($"/details/{qr.Id}")' />
+            }
+
         }
-    }
-    else
-    {
-        <h1 class="mt-20 text-3xl font-bold">History is Empty</h1>
+        else
+        {
+            <h1 class="mt-20 text-3xl font-bold">History is Empty</h1>
+        }
     }
 </div>
 
@@ -25,6 +29,7 @@
 @code {
     private List<QRModel>? _qrList;
     private List<QRModel>? _qrListFiltered;
+    private bool _isLoading = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -34,12 +39,14 @@
 
     public override async Task SetParametersAsync(ParameterView parameters)
     {
+        _isLoading = true;
         await base.SetParametersAsync(parameters);
 
         await LocalStorageService.SaveActiveTabAsync("/history");
         _qrList = await LocalStorageService.GetQRAllAsync();
         _qrListFiltered = _qrList;
 
+        _isLoading = false;
         StateHasChanged();
     }
 
