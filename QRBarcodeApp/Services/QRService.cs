@@ -23,7 +23,7 @@ namespace QRBarcodeApp.Services
             _navigationManager = navigationManager;
         }
 
-        public byte[] GenerateQRBytes(string? value)
+        public static byte[] GenerateQRBytes(string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
                 return [];
@@ -35,6 +35,18 @@ namespace QRBarcodeApp.Services
             return qrCode.GetGraphic(20);
         }
 
+        public static byte[] GenerateBarcodeBytes(string? value, BarcodeType barcodeType)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return [];
+
+            Barcode barcode = new Barcode(value, barcodeType);
+            barcode.IncludeLabel = true;
+            SKImage barcodeImage = barcode.Encode(barcodeType, value);
+
+            return barcodeImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
+        }
+
         public async Task<QRModel?> ToggleQRFavoriteAsync(string? id, QRModel updatedQR)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -43,18 +55,18 @@ namespace QRBarcodeApp.Services
             return await _localStorageService.UpdateQRAsync(id, updatedQR);
         }
 
-        public async Task SaveQRToGalleryAsync(byte[] qrBytes, string? format)
+        public static async Task SaveQRToGalleryAsync(byte[] qrBytes, string? format)
         {
-            if (!qrBytes.Any())
+            if (qrBytes.Length == 0)
                 return;
 
             await MediaGallery.SaveAsync(MediaFileType.Image, qrBytes, $"{format}.png");
             await Toast.Make($"Saved {format} to Gallery").Show();
         }
 
-        public async Task ShareQRAsync(byte[] qrBytes, string? format)
+        public static async Task ShareQRAsync(byte[] qrBytes, string? format)
         {
-            if (!qrBytes.Any())
+            if (qrBytes.Length == 0)
                 return;
 
             await File.WriteAllBytesAsync(Path.Combine(FileSystem.Current.CacheDirectory, $"{format}.png"), qrBytes);
@@ -102,38 +114,32 @@ namespace QRBarcodeApp.Services
 
             return qrHistory.Any(qr => qr.Value == value);
         }
-
-        public string GetQRBase64(byte[] qrBytes)
+        public bool GenerateBytes(QRModel qr, ref byte[] scannedBytes)
         {
-            if (!qrBytes.Any())
-                return "";
+            BarcodeType barcodeType = BarcodeTypeMapper.MapScanFormatToBarcodeType(qr.Format);
 
-            return $"data:image/png;base64,{Convert.ToBase64String(qrBytes)}";
+            if (barcodeType != BarcodeType.Unspecified)
+                scannedBytes = GenerateBarcodeBytes(qr.Value, barcodeType);
+            else
+                scannedBytes = GenerateQRBytes(qr.Value);
+
+            if (scannedBytes.Length == 0)
+                return false;
+
+            return true;
         }
 
-        public void GenerateBytesAndImage(QRModel? qr, ref byte[] scannedBytes, ref string? imageBase64)
+        public static bool GetImageBase64(byte[] qrBytes, ref string? imageBase64)
         {
-            if (qr is not null)
-            {
-                BarcodeType barcodeType = BarcodeTypeMapper.MapScanFormatToBarcodeType(qr.Format);
+            if (qrBytes.Length == 0)
+                return false;
 
-                if (barcodeType != BarcodeType.Unspecified)
-                {
-                    Barcode barcode = new Barcode(qr.Value, barcodeType);
-                    barcode.IncludeLabel = true;
-                    SKImage barcodeImage = barcode.Encode(barcodeType, qr.Value);
-                    scannedBytes = barcodeImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
-                }
-                else
-                {
-                    scannedBytes = GenerateQRBytes(qr?.Value);
-                }
+            imageBase64 = $"data:image/png;base64,{Convert.ToBase64String(qrBytes)}";
 
-                imageBase64 = GetQRBase64(scannedBytes);
-            }
+            return true;
         }
 
-        public BarcodeTypes GetQRType(string? qrText)
+        public static BarcodeTypes GetQRType(string? qrText)
         {
             if (string.IsNullOrWhiteSpace(qrText))
                 return BarcodeTypes.Unknown;

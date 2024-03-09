@@ -1,13 +1,21 @@
 function adjustContentMargin() {
-    const tabHeader = document.querySelector('.tab-header');
-    const tabBar = document.querySelector('.tab-bar');
+    const tabHeader = document.querySelector(".tab-header");
+    const tabBar = document.querySelector(".tab-bar");
 
     if (tabHeader && tabBar) {
-        const mainContent = document.querySelector('.main-content');
+        const mainContent = document.querySelector(".main-content");
 
         if (mainContent) {
             mainContent.style.marginTop = `${tabHeader.offsetHeight + 10}px`;
             mainContent.style.marginBottom = `${tabBar.offsetHeight + 10}px`;
         }
     }
+}
+
+function playActionButtonAnimation(element) {
+    element.classList.add("pulse-animation");
+
+    setTimeout(() => {
+        element.classList.remove("pulse-animation");
+    }, 300);
 }

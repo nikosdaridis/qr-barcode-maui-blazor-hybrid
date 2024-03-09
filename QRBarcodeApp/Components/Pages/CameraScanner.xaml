@@ -17,8 +17,19 @@
         x:Name="Scanner"/>
 
         <Grid ColumnDefinitions="*, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,0.2">
-            <Button Text="Camera" Grid.Column="0" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="CameraButton_Clicked"/>
-            <Button Text="Flash" Grid.Column="1" WidthRequest="100" HeightRequest="50" CornerRadius="25" Clicked="TorchButton_Clicked"/>
+            <Frame Grid.Column="0" WidthRequest="60" HeightRequest="60" CornerRadius="30" BackgroundColor="LightGray" HorizontalOptions="Center" VerticalOptions="Center">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="HandleFrameCameraClick" />
+                </Frame.GestureRecognizers>
+                <ImageButton x:Name="CameraButton" Source="rotate.svg" WidthRequest="40" HeightRequest="40" Clicked="HandleCameraClick" />
+            </Frame>
+
+            <Frame Grid.Column="1" WidthRequest="60" HeightRequest="60" CornerRadius="30" BackgroundColor="LightGray" HorizontalOptions="Center" VerticalOptions="Center">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="HandleFrameTorchClick" />
+                </Frame.GestureRecognizers>
+                <ImageButton x:Name="TorchButton" Source="flash.svg" WidthRequest="40" HeightRequest="40" Clicked="HandleTorchClick" />
+            </Frame>
         </Grid>
     </AbsoluteLayout>
 

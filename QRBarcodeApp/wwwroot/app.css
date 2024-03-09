@@ -117,3 +117,29 @@ h1:focus {
 .favorite-icon {
     filter: invert(13%) sepia(81%) saturate(7468%) hue-rotate(327deg) brightness(107%) contrast(102%);
 }
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    10% {
+        transform: scale(0.8);
+    }
+
+    30% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.pulse-animation {
+    animation: pulse .3s 1;
+}

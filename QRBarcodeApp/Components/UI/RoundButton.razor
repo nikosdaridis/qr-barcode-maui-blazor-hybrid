@@ -1,10 +1,14 @@
-﻿<div>
-    <button class="@($"{(IconPath!.Contains("share") ? "share" : IconPath!.Contains("favorite") ? "favorite" : IconPath!.Contains("delete") ? "delete" : "action")}-button") rounded-full bg-[--primary-color] p-3"
-            @onclick="HandleClick">
-        <img class="h-[30px] w-[30px]" src="@IconPath" />
-    </button>
-    <h3 class="mt-2 text-sm">@Text</h3>
-</div>
+﻿@inject IJSRuntime JSRuntime
+
+@if (!string.IsNullOrWhiteSpace(IconPath))
+{
+    <div @ref="_actionButton" @onclick="@(async () => await JSRuntime.InvokeVoidAsync("playActionButtonAnimation", _actionButton))">
+        <button class="@($"{(IconPath.Contains("share") ? "share" : IconPath.Contains("favorite") ? "favorite" : IconPath.Contains("delete") ? "delete" : "action")}-button") rounded-full bg-[--primary-color] p-3" @onclick="HandleClick">
+            <img class="h-[30px] w-[30px]" src="@IconPath" />
+        </button>
+        <h3 class="mt-2 text-sm">@Text</h3>
+    </div>
+}
 
 @code {
     [Parameter]
@@ -15,4 +19,6 @@
 
     [Parameter]
     public EventCallback<MouseEventArgs> HandleClick { get; set; }
+
+    private ElementReference _actionButton;
 }

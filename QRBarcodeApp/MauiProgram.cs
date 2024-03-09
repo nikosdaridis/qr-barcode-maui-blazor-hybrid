@@ -2,7 +2,6 @@
 using Blazored.LocalStorage;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using QRBarcodeApp.Helpers;
 using QRBarcodeApp.Services;
 
 namespace QRBarcodeApp
@@ -25,7 +24,6 @@ namespace QRBarcodeApp
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<LocalStorageService>();
             builder.Services.AddScoped<QRService>();
-            builder.Services.AddSingleton<BarcodeTypeMapper>();
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

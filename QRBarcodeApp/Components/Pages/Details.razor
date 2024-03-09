@@ -17,7 +17,7 @@
             <img class="w-[70vw] rounded-xl" src="@_imageBase64" />
         }
 
-        <div class="flex w-[90vw] items-center justify-center gap-4 text-center">
+        <div class="flex w-[90vw] items-center justify-center gap-4">
             <RoundButton IconPath=@($"icons/{(_qr.Favorite ?? false ? "" : "not-")}favorite.svg")
                          Text="@((MarkupString)$"{(_qr.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")"
                          HandleClick=@(async () => await ToggleFavoriteAsync()) />
@@ -36,7 +36,7 @@
                          HandleClick=@(async () => await QRService.DeleteQRFromHistoryAsync(_qr)) />
         </div>
 
-        <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@(_qr?.Value)</h2>
+        <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@_qr.Value</h2>
     }
 </div>
 
@@ -62,7 +62,11 @@
 
         _qr = await LocalStorageService.GetQRByIdAsync(Id!);
 
-        QRService.GenerateBytesAndImage(_qr, ref _scannedBytes, ref _imageBase64);
+        if (_qr is not null)
+        {
+            QRService.GenerateBytes(_qr, ref _scannedBytes);
+            QRService.GetImageBase64(_scannedBytes, ref _imageBase64);
+        }
 
         StateHasChanged();
     }

@@ -14,7 +14,7 @@
 
         <img class="w-[70vw] rounded-xl" src="@_qrImageBase64" />
 
-        <div class="flex w-[90vw] items-center justify-center gap-4 text-center">
+        <div class="flex w-[90vw] items-center justify-center gap-4">
 
             @if (_showSaveToHistoryButton)
             {
@@ -66,7 +66,7 @@
         QRText = e.Value?.ToString();
         _savedQR = await LocalStorageService.GetQRByValueAsync(QRText);
         _qrBytes = QRService.GenerateQRBytes(QRText);
-        _qrImageBase64 = QRService.GetQRBase64(_qrBytes);
+        QRService.GetImageBase64(_qrBytes, ref _qrImageBase64);
         _showSaveToHistoryButton = !await QRService.QRExistsInHistoryAsync(QRText);
 
         StateHasChanged();
