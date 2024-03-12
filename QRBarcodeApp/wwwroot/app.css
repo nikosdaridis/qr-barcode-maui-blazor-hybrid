@@ -5,13 +5,15 @@
     --highlight-color: #1587ff;
 }
 
-html, body {
-    font-family: 'Poppins', Arial, sans-serif;
+html,
+body {
+    font-family: "Poppins", Arial, sans-serif;
     background-color: var(--secondary-color);
     color: var(--text-color);
 }
 
-a, .btn-link {
+a,
+.btn-link {
     color: #006bb7;
 }
 
@@ -21,7 +23,11 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
@@ -33,7 +39,7 @@ h1:focus {
     outline: none;
 }
 
-.valid.modified:not([type=checkbox]) {
+.valid.modified:not([type="checkbox"]) {
     outline: 1px solid #26b050;
 }
 
@@ -71,7 +77,7 @@ h1:focus {
 }
 
     .blazor-error-boundary::after {
-        content: "An error has occurred."
+        content: "An error has occurred.";
     }
 
 .status-bar-safe-area {
@@ -89,12 +95,14 @@ h1:focus {
         z-index: 1;
     }
 
-    .flex-column, .navbar-brand {
+    .flex-column,
+    .navbar-brand {
         padding-left: env(safe-area-inset-left);
     }
 }
 
-.tab-bar-nav-link img {
+.tab-bar-nav-link img,
+.generate-icon {
     filter: invert(60%) sepia(5%) saturate(200%) hue-rotate(177deg) brightness(88%) contrast(82%);
 }
 
@@ -107,7 +115,6 @@ h1:focus {
 .share-button img {
     filter: invert(71%) sepia(68%) saturate(5326%) hue-rotate(78deg) brightness(124%) contrast(118%);
 }
-
 
 .delete-button img {
     filter: invert(11%) sepia(100%) saturate(7439%) hue-rotate(1deg) brightness(110%) contrast(109%);
@@ -123,16 +130,12 @@ h1:focus {
         transform: scale(1);
     }
 
-    10% {
-        transform: scale(0.8);
-    }
-
-    30% {
-        transform: scale(1);
+    25% {
+        transform: scale(0.7);
     }
 
     50% {
-        transform: scale(1.2);
+        transform: scale(0.8);
     }
 
     100% {
@@ -141,5 +144,5 @@ h1:focus {
 }
 
 .pulse-animation {
-    animation: pulse .3s 1;
+    animation: pulse .2s 1;
 }

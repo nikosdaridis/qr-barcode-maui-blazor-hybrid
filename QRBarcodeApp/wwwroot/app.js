@@ -1,21 +1,22 @@
 function adjustContentMargin() {
-    const tabHeader = document.querySelector(".tab-header");
-    const tabBar = document.querySelector(".tab-bar");
+    const tabHeader = document.querySelector(".tab-header"),
+        tabBar = document.querySelector(".tab-bar"),
+        mainContent = document.querySelector(".main-content");
 
-    if (tabHeader && tabBar) {
-        const mainContent = document.querySelector(".main-content");
+    if (!tabHeader || !tabBar || !mainContent)
+        return;
 
-        if (mainContent) {
-            mainContent.style.marginTop = `${tabHeader.offsetHeight + 10}px`;
-            mainContent.style.marginBottom = `${tabBar.offsetHeight + 10}px`;
-        }
-    }
+    mainContent.style.marginTop = `${tabHeader.offsetHeight + 10}px`;
+    mainContent.style.marginBottom = `${tabBar.offsetHeight + 10}px`;
 }
 
-function playActionButtonAnimation(element) {
+function playButtonAnimation(element) {
+    if (!element)
+        return;
+
     element.classList.add("pulse-animation");
 
     setTimeout(() => {
         element.classList.remove("pulse-animation");
-    }, 300);
+    }, 220);
 }

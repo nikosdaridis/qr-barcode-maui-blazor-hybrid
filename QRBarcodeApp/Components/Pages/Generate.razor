@@ -1,55 +1,34 @@
 ﻿@page "/generate"
-@page "/generate/{QRText}"
 
+@inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
-@inject QRService QRService
 @inject IJSRuntime JSRuntime
 
-<TabHeader Name="Generate" HandleInput="HandleInputAsync" InputPlaceholder="Enter Text" />
+<TabHeader Name="Generate" />
 
-<div class="main-content flex w-[90vw] flex-col items-center gap-4">
-    @if (!string.IsNullOrWhiteSpace(QRText))
+<div class="main-content grid w-[90vw] gap-2">
+    <h1 class="text-xl">QR</h1>
+
+    @foreach (string type in new[] { "Text", "Url", "Email", "WiFi", "GeographicCoordinates", "ContactInfo", "CalendarEvent", "Phone", "Sms" })
     {
-        <h2 class="text-2xl font-semibold text-[--highlight-color]">@QRService.GetQRType(QRText)</h2>
+        <GenerateRectangle IconPath=@($"icons/generate/{type.ToLower()}.svg")
+                           Text=@(type != "WiFi" ? Regex.Replace(type, "(\\B[A-Z])", " $1") : type)
+                           HandleClick="@(() => NavigationManager.NavigateTo($"/generate/{type}/QRCode"))" />
+    }
 
-        <img class="w-[70vw] rounded-xl" src="@_qrImageBase64" />
+    <h1 class="mt-4 text-xl">Barcode</h1>
 
-        <div class="flex w-[90vw] items-center justify-center gap-4">
-
-            @if (_showSaveToHistoryButton)
-            {
-                <RoundButton IconPath="icons/history.svg"
-                             Text="@((MarkupString)"Save To<br />History")"
-                             HandleClick=@(async () => await HandleSaveToHistoryAsync()) />
-            }
-            else if (_savedQR is not null)
-            {
-                <RoundButton IconPath=@($"icons/{(_savedQR.Favorite ?? false ? "" : "not-")}favorite.svg")
-                             Text="@((MarkupString)$"{(_savedQR.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")"
-                             HandleClick=@(async () => await ToggleFavoriteAsync()) />
-            }
-
-            <RoundButton IconPath="icons/image.svg"
-                         Text="@((MarkupString)"Save To<br />Gallery")"
-                         HandleClick=@(async () => await QRService.SaveQRToGalleryAsync(_qrBytes, "QRCode" )) />
-
-            <RoundButton IconPath="icons/share.svg"
-                         Text="@((MarkupString)"Share<br />QRCode")"
-                         HandleClick=@(async () => await QRService.ShareQRAsync(_qrBytes, "QRCode")) />
-        </div>
+    @foreach (string format in new[] { "Code128", "Code39", "Code93", "CodaBar", "Ean13", "Ean8", "Upca", "Upce", "I2OF5" })
+    {
+        <GenerateRectangle IconPath="icons/generate/barcode.svg"
+                           Text=@format
+                           HandleClick="@(() => NavigationManager.NavigateTo($"/generate/Text/{format}"))" />
     }
 </div>
 
 <TabBar />
 
 @code {
-    [Parameter]
-    public string? QRText { get; set; }
-    private byte[] _qrBytes = [];
-    private string? _qrImageBase64;
-    private QRModel? _savedQR;
-    private bool _showSaveToHistoryButton;
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -59,36 +38,5 @@
     protected override async Task OnInitializedAsync()
     {
         await LocalStorageService.SaveActiveTabAsync("/generate");
-    }
-
-    private async Task HandleInputAsync(ChangeEventArgs e)
-    {
-        QRText = e.Value?.ToString();
-        _savedQR = await LocalStorageService.GetQRByValueAsync(QRText);
-        _qrBytes = QRService.GenerateQRBytes(QRText);
-        QRService.GetImageBase64(_qrBytes, ref _qrImageBase64);
-        _showSaveToHistoryButton = !await QRService.QRExistsInHistoryAsync(QRText);
-
-        StateHasChanged();
-    }
-
-    private async Task HandleSaveToHistoryAsync()
-    {
-        string? id = await QRService.SaveQRToHistoryAsync(QRText);
-
-        if (id is null)
-            return;
-        else
-            _showSaveToHistoryButton = false;
-
-        _savedQR = await LocalStorageService.GetQRByIdAsync(id);
-    }
-
-    private async Task ToggleFavoriteAsync()
-    {
-        _savedQR = await QRService.ToggleQRFavoriteAsync(_savedQR!.Id, new QRModel { Favorite = !_savedQR.Favorite });
-        await Toast.Make($"{(_savedQR?.Favorite ?? false ? "Added to" : "Removed from")} Favorites").Show();
-
-        StateHasChanged();
     }
 }

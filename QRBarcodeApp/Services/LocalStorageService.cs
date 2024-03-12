@@ -50,6 +50,17 @@ namespace QRBarcodeApp.Services
             return newQR.Id;
         }
 
+        public async Task<string> SaveQRAsync(string? text, string type, string format, string source)
+        {
+            List<QRModel> qrHistory = await GetQRAllAsync();
+
+            QRModel? newQR = new QRModel { Value = text, Type = type, Format = format, Source = source, Favorite = false };
+            qrHistory.Add(newQR);
+            await _localStorageService.SetItemAsync("QRHistory", qrHistory);
+
+            return newQR.Id;
+        }
+
         public async Task<QRModel?> UpdateQRAsync(string? id, QRModel updatedQR)
         {
             if (string.IsNullOrWhiteSpace(id))

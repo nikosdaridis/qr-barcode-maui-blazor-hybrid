@@ -1,7 +1,7 @@
 ﻿<div class="flex w-[90vw] items-center justify-between rounded-xl bg-[#1F1F1F] p-3" @onclick="HandleClick">
     <div class="grid">
         <div class="flex items-center gap-2">
-            <img class="favorite-icon h-[15px] w-[15px]" src="@($"icons/{(QR?.Favorite ?? false ? "" : "not-")}favorite.svg")" />
+            <img class="favorite-icon h-[20px] w-[20px]" src="@($"icons/{(QR?.Favorite ?? false ? "" : "not-")}favorite.svg")" />
             <h2 class="max-w-[70vw] break-words text-left font-semibold">@QR?.Value</h2>
         </div>
         <div class="mt-2 flex gap-4 text-sm text-gray-500">

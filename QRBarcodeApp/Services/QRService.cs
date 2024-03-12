@@ -1,5 +1,4 @@
-﻿using BarcodeScanning;
-using BarcodeStandard;
+﻿using BarcodeStandard;
 using CommunityToolkit.Maui.Alerts;
 using Microsoft.AspNetCore.Components;
 using NativeMedia;
@@ -7,7 +6,6 @@ using QRBarcodeApp.Helpers;
 using QRBarcodeApp.Models;
 using QRCoder;
 using SkiaSharp;
-using System.Text.RegularExpressions;
 using BarcodeType = BarcodeStandard.Type;
 
 namespace QRBarcodeApp.Services
@@ -42,7 +40,16 @@ namespace QRBarcodeApp.Services
 
             Barcode barcode = new Barcode(value, barcodeType);
             barcode.IncludeLabel = true;
-            SKImage barcodeImage = barcode.Encode(barcodeType, value);
+            SKImage barcodeImage;
+
+            try
+            {
+                barcodeImage = barcode.Encode(barcodeType, value, Math.Max(300, value.Length * 16), 300);
+            }
+            catch
+            {
+                return [];
+            }
 
             return barcodeImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
         }
@@ -79,19 +86,6 @@ namespace QRBarcodeApp.Services
             });
         }
 
-        public async Task<string?> SaveQRToHistoryAsync(string? value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-
-            BarcodeResult qr = new BarcodeResult() { RawValue = value, BarcodeType = GetQRType(value), BarcodeFormat = BarcodeFormats.QRCode };
-
-            string id = await _localStorageService.SaveQRAsync(qr, "Generated");
-            await Toast.Make($"Saved {qr.BarcodeFormat} to History").Show();
-
-            return id;
-        }
-
         public async Task DeleteQRFromHistoryAsync(QRModel? qrToDelete)
         {
             if (qrToDelete is null)
@@ -114,6 +108,7 @@ namespace QRBarcodeApp.Services
 
             return qrHistory.Any(qr => qr.Value == value);
         }
+
         public bool GenerateBytes(QRModel qr, ref byte[] scannedBytes)
         {
             BarcodeType barcodeType = BarcodeTypeMapper.MapScanFormatToBarcodeType(qr.Format);
@@ -137,38 +132,6 @@ namespace QRBarcodeApp.Services
             imageBase64 = $"data:image/png;base64,{Convert.ToBase64String(qrBytes)}";
 
             return true;
-        }
-
-        public static BarcodeTypes GetQRType(string? qrText)
-        {
-            if (string.IsNullOrWhiteSpace(qrText))
-                return BarcodeTypes.Unknown;
-
-            if (qrText.StartsWith("BEGIN:VEVENT", StringComparison.OrdinalIgnoreCase))
-                return BarcodeTypes.CalendarEvent;
-
-            if (qrText.StartsWith("BEGIN:VCARD", StringComparison.OrdinalIgnoreCase))
-                return BarcodeTypes.ContactInfo;
-
-            if (qrText.StartsWith("WIFI:", StringComparison.OrdinalIgnoreCase))
-                return BarcodeTypes.WiFi;
-
-            if (qrText.StartsWith("SMSTO:", StringComparison.OrdinalIgnoreCase))
-                return BarcodeTypes.Sms;
-
-            if (Regex.IsMatch(qrText, @"^geo:\d{1,}\.\d{1,},\d{1,}\.\d{1,}"))
-                return BarcodeTypes.GeographicCoordinates;
-
-            if (Regex.IsMatch(qrText, @"^((?:http|https):\/\/|www\.)[\w-]+(?:\.[\w-]+)+", RegexOptions.IgnoreCase))
-                return BarcodeTypes.Url;
-
-            if (Regex.IsMatch(qrText, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
-                return BarcodeTypes.Email;
-
-            if (Regex.IsMatch(qrText, @"^\+?\d{10,}$"))
-                return BarcodeTypes.Phone;
-
-            return BarcodeTypes.Text;
         }
     }
 }

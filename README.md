@@ -7,10 +7,10 @@
 </p>
 
 <div align="center">
-  <img alt="Screenshot" height="800" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot1.png>
-  <img alt="Screenshot" height="800" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot2.png>
-  <img alt="Screenshot" height="800" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot3.png>
-  <img alt="Screenshot" height="800" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot4.png>
+  <img alt="Screenshot" height="600" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot1.png>
+  <img alt="Screenshot" height="600" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot2.png>
+  <img alt="Screenshot" height="600" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot3.png>
+  <img alt="Screenshot" height="600" src=https://github.com/nikosdaridis/qr-barcode-maui-blazor-hybrid/raw/main/Screenshot4.png>
 </div>
 
 ## 🛠 Installation
