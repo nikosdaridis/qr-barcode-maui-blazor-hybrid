@@ -13,7 +13,7 @@ namespace QRBarcodeApp.Models.QR
         [RegularExpression(@"^((\d{1,2}|1[0-7]\d|180)(\.\d+)?)$", ErrorMessage = "Invalid Longitude")]
         public double? Longitude { get; set; } = null;
 
-        public string? GetValue()
+        public string GetValue()
         {
             return $"geo:{Latitude},{Longitude}";
         }

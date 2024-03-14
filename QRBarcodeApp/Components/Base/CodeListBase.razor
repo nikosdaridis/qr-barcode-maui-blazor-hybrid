@@ -1,0 +1,64 @@
+﻿@inherits ComponentBase
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
+@if (!string.IsNullOrWhiteSpace(tabName))
+{
+    <TabHeader Name="@tabName" HandleInput="HandleInput" InputPlaceholder="@($"Search {tabName}")" />
+
+    <div class="main-content grid w-[90vw] gap-2">
+        @if (_codeListFiltered?.Any() ?? false)
+        {
+            foreach (CodeModel code in _codeListFiltered)
+            {
+                <CodeRectangle Code="code" HandleClick='() => NavigationManager.NavigateTo($"/details/{code.Id}")' />
+            }
+        }
+        else
+        {
+            <h1 class="mt-20 text-3xl font-bold">@($"No {tabName}")</h1>
+        }
+    </div>
+
+    <TabBar />
+}
+
+@code {
+    protected List<CodeModel>? codeList;
+    protected string? tabName;
+
+    private List<CodeModel>? _codeListFiltered;
+    private bool _adjustedContentMargin;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!string.IsNullOrWhiteSpace(tabName) && !_adjustedContentMargin)
+        {
+            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
+            _adjustedContentMargin = true;
+        }
+    }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+        await LoadComponentDataAsync();
+        _codeListFiltered = codeList;
+        StateHasChanged();
+    }
+
+    protected virtual async Task LoadComponentDataAsync()
+    {
+        await Task.Yield();
+    }
+
+    private void HandleInput(ChangeEventArgs e)
+    {
+        string? searchInput = e.Value?.ToString();
+
+        _codeListFiltered = string.IsNullOrWhiteSpace(searchInput)
+            ? codeList
+            : codeList?.Where(code => code.Value?.Contains(searchInput, StringComparison.OrdinalIgnoreCase) ?? false).ToList();
+    }
+}

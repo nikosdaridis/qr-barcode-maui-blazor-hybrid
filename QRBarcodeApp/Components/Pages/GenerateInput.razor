@@ -18,7 +18,7 @@
                 if (_model is WiFiModel && property.Name == "EncryptionType")
                 {
                     <select class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                            @onchange="@((ChangeEventArgs e) => SetValue(_model, property, e.Value))">
+                            @onchange="@((ChangeEventArgs e) => SetValue(property, e.Value))">
                         <option value="WPA/WPA2">WPA/WPA2</option>
                         <option value="WEP">WEP</option>
                     </select>
@@ -34,7 +34,7 @@
                            type="@GetInputType(property.PropertyType)"
                            value="@propertyValue"
                            step="@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")"
-                           @onchange="@((ChangeEventArgs e) => SetValue(_model, property, e.Value))" />
+                           @onchange="@((ChangeEventArgs e) => SetValue(property, e.Value))" />
                 }
             }
             <button class="mt-4 text-2xl p-3 bg-[--primary-color] rounded-xl" type="submit" @ref="_generateButton"
@@ -78,6 +78,7 @@
             "CodaBar" => new CodaBarModel(),
             "Ean13" => new Ean13Model(),
             "Ean8" => new Ean8Model(),
+            "Itf" => new ItfModel(),
             "Upca" => new UpcaModel(),
             "Upce" => new UpceModel(),
             "I2OF5" => new I2OF5Model(),
@@ -115,16 +116,15 @@
         };
     }
 
-    private void SetValue(object model, PropertyInfo property, object? value)
+    private void SetValue(PropertyInfo property, object? value)
     {
         if (string.IsNullOrWhiteSpace(value?.ToString()))
-            property.SetValue(model, null);
+            property.SetValue(_model, null);
         else
         {
             try
             {
-                System.Type propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                property.SetValue(model, Convert.ChangeType(value, propertyType));
+                property.SetValue(_model, Convert.ChangeType(value, Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType));
             }
             catch
             {
@@ -135,7 +135,7 @@
 
     private async Task HandleSubmitAsync()
     {
-        string id = await LocalStorageService.SaveQRAsync(_model!.GetValue(), Type!, Format!, "Generated");
+        string id = await LocalStorageService.SaveCodeAsync(_model!.GetValue(), Type!, Format!, "Generated");
 
         NavigationManager.NavigateTo($"/details/{id}");
     }

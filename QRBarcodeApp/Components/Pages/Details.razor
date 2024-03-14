@@ -2,15 +2,15 @@
 
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
-@inject QRService QRService
+@inject CodeService CodeService
 @inject IJSRuntime JSRuntime
 
-<TabHeader Name="@($"{_qr?.Source} {_qr?.Format}")" />
+<TabHeader Name="@($"{_code?.Source} {_code?.Format}")" />
 
 <div class="main-content flex w-[90vw] flex-col items-center gap-4">
-    @if (_qr is not null)
+    @if (_code is not null)
     {
-        <h2 class="text-2xl font-semibold text-[--highlight-color]">@_qr.Type</h2>
+        <h2 class="text-2xl font-semibold text-[--highlight-color]">@_code.Type</h2>
 
         @if (!string.IsNullOrWhiteSpace(_imageBase64))
         {
@@ -18,25 +18,25 @@
         }
 
         <div class="flex w-[90vw] items-center justify-center gap-4">
-            <RoundButton IconPath=@($"icons/{(_qr.Favorite ?? false ? "" : "not-")}favorite.svg")
-                         Text="@((MarkupString)$"{(_qr.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")"
+            <RoundButton IconPath=@($"icons/{(_code.Favorite ?? false ? "" : "not-")}favorite.svg")
+                         Text="@((MarkupString)$"{(_code.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")"
                          HandleClick=@(async () => await ToggleFavoriteAsync()) />
 
-            @if (_scannedBytes.Any())
+            @if (_codeBytes.Length != 0)
             {
                 <RoundButton IconPath="icons/image.svg"
                              Text="@((MarkupString)"Save To<br />Gallery")"
-                             HandleClick=@(async () => await QRService.SaveQRToGalleryAsync(_scannedBytes, _qr.Format)) />
+                             HandleClick=@(async () => await CodeService.SaveCodeToGalleryAsync(_codeBytes, _code.Format!)) />
                 <RoundButton IconPath="icons/share.svg"
-                             Text="@((MarkupString)$"Share<br />{_qr.Format}")"
-                             HandleClick=@(async () => await QRService.ShareQRAsync(_scannedBytes, _qr.Format)) />
+                             Text="@((MarkupString)$"Share<br />{_code.Format}")"
+                             HandleClick=@(async () => await CodeService.ShareCodeAsync(_codeBytes, _code.Format!)) />
             }
             <RoundButton IconPath="icons/delete.svg"
-                         Text="@((MarkupString)$"Delete<br />{_qr.Format}")"
-                         HandleClick=@(async () => await QRService.DeleteQRFromHistoryAsync(_qr)) />
+                         Text="@((MarkupString)$"Delete<br />{_code.Format}")"
+                         HandleClick=@(async () => await CodeService.DeleteCodeAsync(_code)) />
         </div>
 
-        <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@_qr.Value</h2>
+        <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@_code.Value</h2>
     }
 </div>
 
@@ -46,8 +46,8 @@
     [Parameter]
     public string? Id { get; set; }
 
-    private QRModel? _qr;
-    private byte[] _scannedBytes = [];
+    private CodeModel? _code;
+    private byte[] _codeBytes = [];
     private string? _imageBase64;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -60,12 +60,12 @@
     {
         await base.SetParametersAsync(parameters);
 
-        _qr = await LocalStorageService.GetQRByIdAsync(Id!);
+        _code = await LocalStorageService.GetCodeAsync(Id!);
 
-        if (_qr is not null)
+        if (_code is not null)
         {
-            QRService.GenerateBytes(_qr, ref _scannedBytes);
-            QRService.GetImageBase64(_scannedBytes, ref _imageBase64);
+            CodeService.GenerateCodeBytes(_code, ref _codeBytes);
+            CodeService.GetCodeImageBase64(_codeBytes, ref _imageBase64);
         }
 
         StateHasChanged();
@@ -73,9 +73,7 @@
 
     private async Task ToggleFavoriteAsync()
     {
-        _qr = await QRService.ToggleQRFavoriteAsync(_qr!.Id, new QRModel { Favorite = !_qr.Favorite });
-        await Toast.Make($"{(_qr?.Favorite ?? false ? "Added to" : "Removed from")} Favorites").Show();
-
-        StateHasChanged();
+        _code = await CodeService.ToggleCodeFavoriteAsync(_code!.Id, new CodeModel { Favorite = !_code.Favorite });
+        await Toast.Make($"{(_code?.Favorite ?? false ? "Added to" : "Removed from")} Favorites").Show();
     }
 }

@@ -14,7 +14,7 @@ namespace QRBarcodeApp.Models.QR
         [Required(ErrorMessage = "Password is required")]
         public string? Password { get; set; }
 
-        public string? GetValue()
+        public string GetValue()
         {
             return $"WIFI:T:{(EncryptionType == "WPA/WPA2" ? "WPA" : "WEP")};S:{SSID};P:{Password};;";
         }

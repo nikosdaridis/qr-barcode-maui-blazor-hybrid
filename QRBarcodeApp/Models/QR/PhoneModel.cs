@@ -9,7 +9,7 @@ namespace QRBarcodeApp.Models.QR
         [RegularExpression("^\\d+$", ErrorMessage = "Invalid Phone")]
         public ulong? Phone { get; set; }
 
-        public string? GetValue()
+        public string GetValue()
         {
             return $"tel:{Phone}";
         }

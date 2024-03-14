@@ -9,9 +9,9 @@ namespace QRBarcodeApp.Models.Barcode
         [RegularExpression(@"^\d{13}$", ErrorMessage = "Ean13 must be 13 digits")]
         public string? Ean13 { get; set; } = null;
 
-        public string? GetValue()
+        public string GetValue()
         {
-            return Ean13;
+            return Ean13 ?? "";
         }
     }
 }

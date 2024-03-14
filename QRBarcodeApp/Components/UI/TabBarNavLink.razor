@@ -7,11 +7,11 @@
         <img class="h-[30px] w-[30px]" src="icons/scan.svg" />
     </div>
 }
-else if (!string.IsNullOrWhiteSpace(TabName) && !string.IsNullOrWhiteSpace(_activeTab))
+else
 {
     <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href="@($"/{TabName}")">
-        <img class="@(_activeTab.Contains(TabName) ?"active" : "") h-[30px] w-[30px] transition duration-300 ease-in-out"
-             src="@($"icons/{TabName}{(_activeTab!.Contains(TabName) ? "-active" : "")}.svg")" />
+        <img class="@(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? "" : "active") h-[30px] w-[30px] transition duration-300 ease-in-out"
+             src="@($"icons/{TabName}{(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? "" : "-active")}.svg")" />
     </NavLink>
 }
 
@@ -26,13 +26,7 @@ else if (!string.IsNullOrWhiteSpace(TabName) && !string.IsNullOrWhiteSpace(_acti
     {
         await base.SetParametersAsync(parameters);
 
-        string currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        int indexOfSlash = currentUrl.IndexOf('/');
-
-        if (indexOfSlash != -1)
-            _activeTab = currentUrl.Substring(0, indexOfSlash);
-        else
-            _activeTab = currentUrl;
+        _activeTab = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/').FirstOrDefault();
     }
 
     private async Task ShowCameraScannerPopupAsync()

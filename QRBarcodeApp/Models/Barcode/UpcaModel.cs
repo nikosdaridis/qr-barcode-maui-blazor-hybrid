@@ -9,9 +9,9 @@ namespace QRBarcodeApp.Models.Barcode
         [RegularExpression(@"^\d{12}$", ErrorMessage = "Upca must be 12 digits")]
         public string? Upca { get; set; } = null;
 
-        public string? GetValue()
+        public string GetValue()
         {
-            return Upca;
+            return Upca ?? "";
         }
     }
 }

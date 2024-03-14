@@ -1,9 +1,8 @@
 ﻿namespace QRBarcodeApp.Models
 {
-    public class QRModel
+    public class CodeModel
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
-        public DateTime DateTime { get; set; } = DateTime.Now;
         public string? Value { get; set; }
         public string? Type { get; set; }
         public string? Format { get; set; }

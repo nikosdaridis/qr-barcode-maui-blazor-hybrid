@@ -9,9 +9,9 @@ namespace QRBarcodeApp.Models.QR
         [RegularExpression(@"^(?i)(?:(?:http|https):\/\/|www\.)?[\w-]+(?:\.[\w-]+)+", ErrorMessage = "Invalid Url")]
         public string? Url { get; set; }
 
-        public string? GetValue()
+        public string GetValue()
         {
-            return Url;
+            return Url ?? "";
         }
     }
 }

@@ -3,7 +3,7 @@
 @if (!string.IsNullOrWhiteSpace(IconPath))
 {
     <div>
-        <button class="@($"{(IconPath.Contains("share") ? "share" : IconPath.Contains("favorite") ? "favorite" : IconPath.Contains("delete") ? "delete" : "action")}-button") rounded-full bg-[--primary-color] p-3"
+        <button class="@GetButtonClass() rounded-full bg-[--primary-color] p-3"
                 @ref="_actionButton" @onclick="HandleOnClickAsync">
             <img class="h-[30px] w-[30px]" src="@IconPath" />
         </button>
@@ -22,6 +22,19 @@
     public EventCallback<MouseEventArgs> HandleClick { get; set; }
 
     private ElementReference _actionButton;
+
+    private string GetButtonClass()
+    {
+        string baseClass = IconPath switch
+        {
+            string path when path.Contains("share") => "share",
+            string path when path.Contains("favorite") => "favorite",
+            string path when path.Contains("delete") => "delete",
+            _ => "action"
+        };
+
+        return $"{baseClass}-button";
+    }
 
     private async Task HandleOnClickAsync(MouseEventArgs args)
     {

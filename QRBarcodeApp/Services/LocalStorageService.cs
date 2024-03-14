@@ -5,118 +5,89 @@ using System.Reflection;
 
 namespace QRBarcodeApp.Services
 {
-    public class LocalStorageService
+    public class LocalStorageService(ILocalStorageService localStorageService)
     {
-        private readonly ILocalStorageService _localStorageService;
-
-        public LocalStorageService(ILocalStorageService localStorageService)
+        internal class StorageKeys
         {
-            _localStorageService = localStorageService;
+            internal const string Codes = "Codes";
+            internal const string ActiveTab = "ActiveTab";
         }
 
-        public async Task<QRModel?> GetQRByIdAsync(string? id)
+        public async Task<CodeModel?> GetCodeAsync(string? id)
+        {
+            return string.IsNullOrWhiteSpace(id) ? null : (await GetCodesAsync()).FirstOrDefault(code => code.Id == id);
+        }
+
+        public async Task<List<CodeModel>> GetCodesAsync()
+        {
+            return await localStorageService.GetItemAsync<List<CodeModel>>(StorageKeys.Codes) ?? [];
+        }
+
+        public async Task<string> SaveCodeAsync(BarcodeResult code, string source)
+        {
+            return await SaveCodeAsync(code.RawValue, code.BarcodeType.ToString().Split('.').Last(), code.BarcodeFormat.ToString().Split('.').Last(), source);
+        }
+
+        public async Task<string> SaveCodeAsync(string value, string type, string format, string source)
+        {
+            CodeModel newCode = new CodeModel { Value = value, Type = type, Format = format, Source = source, Favorite = false };
+            List<CodeModel> codes = await GetCodesAsync();
+            codes.Add(newCode);
+            await localStorageService.SetItemAsync(StorageKeys.Codes, codes);
+
+            return newCode.Id;
+        }
+
+        public async Task<CodeModel?> UpdateCodeAsync(string? id, CodeModel updatedCode)
         {
             if (string.IsNullOrWhiteSpace(id))
                 return null;
 
-            List<QRModel> qrHistory = await GetQRAllAsync();
-            return qrHistory.FirstOrDefault(qr => qr.Id == id);
-        }
+            List<CodeModel> codes = await GetCodesAsync();
+            CodeModel? codeToUpdate = codes.FirstOrDefault(code => code.Id == id);
 
-        public async Task<QRModel?> GetQRByValueAsync(string? value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
+            if (codeToUpdate is null)
                 return null;
 
-            List<QRModel> qrHistory = await GetQRAllAsync();
-            return qrHistory.FirstOrDefault(qr => qr.Value == value);
-        }
-
-        public async Task<List<QRModel>> GetQRAllAsync()
-        {
-            return await _localStorageService.GetItemAsync<List<QRModel>>("QRHistory") ?? [];
-        }
-
-        public async Task<string> SaveQRAsync(BarcodeResult qr, string source)
-        {
-            List<QRModel> qrHistory = await GetQRAllAsync();
-
-            string type = qr.BarcodeType.ToString().Split('.').Last();
-            string format = qr.BarcodeFormat.ToString().Split('.').Last();
-            QRModel? newQR = new QRModel { Value = qr.RawValue, Type = type, Format = format, Source = source, Favorite = false };
-            qrHistory.Add(newQR);
-            await _localStorageService.SetItemAsync("QRHistory", qrHistory);
-
-            return newQR.Id;
-        }
-
-        public async Task<string> SaveQRAsync(string? text, string type, string format, string source)
-        {
-            List<QRModel> qrHistory = await GetQRAllAsync();
-
-            QRModel? newQR = new QRModel { Value = text, Type = type, Format = format, Source = source, Favorite = false };
-            qrHistory.Add(newQR);
-            await _localStorageService.SetItemAsync("QRHistory", qrHistory);
-
-            return newQR.Id;
-        }
-
-        public async Task<QRModel?> UpdateQRAsync(string? id, QRModel updatedQR)
-        {
-            if (string.IsNullOrWhiteSpace(id))
-                return null;
-
-            List<QRModel> qrHistory = await GetQRAllAsync();
-            QRModel? qrToUpdate = qrHistory.FirstOrDefault(qr => qr.Id == id);
-
-            if (qrToUpdate is null)
-                return null;
-
-            foreach (PropertyInfo property in updatedQR.GetType().GetProperties())
+            foreach (PropertyInfo property in typeof(CodeModel).GetProperties().Where(p => p.Name != "Id"))
             {
-                if (property.Name == "Id" || property.Name == "DateTime")
-                    continue;
-
-                object? newValue = property.GetValue(updatedQR);
+                object? newValue = property.GetValue(updatedCode);
 
                 if (newValue is not null)
-                {
-                    PropertyInfo? propertyToUpdate = qrToUpdate.GetType().GetProperty(property.Name);
-
-                    propertyToUpdate?.SetValue(qrToUpdate, newValue);
-                }
+                    property.SetValue(codeToUpdate, newValue);
             }
 
-            await _localStorageService.SetItemAsync("QRHistory", qrHistory);
-            return qrToUpdate;
+            await localStorageService.SetItemAsync(StorageKeys.Codes, codes);
+
+            return codeToUpdate;
         }
 
-        public async Task<bool> DeleteQRAsync(string? id)
+        public async Task<bool> DeleteCodeAsync(string? id)
         {
             if (string.IsNullOrWhiteSpace(id))
                 return false;
 
-            List<QRModel> qrHistory = await GetQRAllAsync();
+            List<CodeModel> codes = await GetCodesAsync();
 
-            QRModel? qrToDelete = qrHistory.FirstOrDefault(qr => qr.Id == id);
+            CodeModel? codeToDelete = codes.FirstOrDefault(code => code.Id == id);
 
-            if (qrToDelete is null)
+            if (codeToDelete is null)
                 return false;
 
-            qrHistory.Remove(qrToDelete);
-            await _localStorageService.SetItemAsync("QRHistory", qrHistory);
+            codes.Remove(codeToDelete);
+            await localStorageService.SetItemAsync(StorageKeys.Codes, codes);
 
             return true;
         }
 
         public async Task<string> GetActiveTabAsync()
         {
-            return await _localStorageService.GetItemAsync<string>("ActiveTab") ?? "";
+            return await localStorageService.GetItemAsync<string>(StorageKeys.ActiveTab) ?? "";
         }
 
         public async Task SaveActiveTabAsync(string activeTab)
         {
-            await _localStorageService.SetItemAsync("ActiveTab", activeTab);
+            await localStorageService.SetItemAsync(StorageKeys.ActiveTab, activeTab);
         }
     }
 }

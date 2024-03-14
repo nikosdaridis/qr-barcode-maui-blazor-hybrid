@@ -2,6 +2,6 @@
 {
     public interface IGenerateModel
     {
-        public string? GetValue();
+        public string GetValue();
     }
 }

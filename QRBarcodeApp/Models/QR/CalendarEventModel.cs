@@ -6,13 +6,13 @@ namespace QRBarcodeApp.Models.QR
 {
     public class CalendarEventModel : IGenerateModel
     {
-        [Required]
+        [Required(ErrorMessage = "Summary is required")]
         public string? Summary { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Start is required")]
         public DateTime Start { get; set; } = DateTime.Now;
 
-        [Required]
+        [Required(ErrorMessage = "End is required")]
         public DateTime End { get; set; } = DateTime.Now;
 
         public string? Location { get; set; }
@@ -21,28 +21,24 @@ namespace QRBarcodeApp.Models.QR
 
         public string GetValue()
         {
-            string? startString = Start.ToUniversalTime().ToString("yyyyMMdd\\THHmmss\\Z");
-            string? endString = End.ToUniversalTime().ToString("yyyyMMdd\\THHmmss\\Z");
+            string startString = Start.ToUniversalTime().ToString("yyyyMMdd\\THHmmss\\Z");
+            string endString = End.ToUniversalTime().ToString("yyyyMMdd\\THHmmss\\Z");
 
-            StringBuilder? iCal = new StringBuilder();
-            iCal.AppendLine("BEGIN:VCALENDAR");
-            iCal.AppendLine("VERSION:2.0");
-            iCal.AppendLine("BEGIN:VEVENT");
-            iCal.AppendLine($"DTSTART:{startString}");
-            iCal.AppendLine($"DTEND:{endString}");
-            iCal.AppendLine($"SUMMARY:{Summary}");
+            StringBuilder? vCal = new StringBuilder();
+            vCal.AppendLine("BEGIN:VCALENDAR");
+            vCal.AppendLine("VERSION:2.0");
+            vCal.AppendLine("BEGIN:VEVENT");
+            vCal.AppendLine($"DTSTART:{startString}");
+            vCal.AppendLine($"DTEND:{endString}");
+            vCal.AppendLine($"SUMMARY:{Summary}");
             if (!string.IsNullOrWhiteSpace(Location))
-            {
-                iCal.AppendLine($"LOCATION:{Location}");
-            }
+                vCal.AppendLine($"LOCATION:{Location}");
             if (!string.IsNullOrWhiteSpace(Description))
-            {
-                iCal.AppendLine($"DESCRIPTION:{Description}");
-            }
-            iCal.AppendLine("END:VEVENT");
-            iCal.AppendLine("END:VCALENDAR");
+                vCal.AppendLine($"DESCRIPTION:{Description}");
+            vCal.AppendLine("END:VEVENT");
+            vCal.AppendLine("END:VCALENDAR");
 
-            return iCal.ToString();
+            return vCal.ToString();
         }
     }
 }

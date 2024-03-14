@@ -1,23 +1,23 @@
 ﻿<div class="flex w-[90vw] items-center justify-between rounded-xl bg-[#1F1F1F] p-3" @onclick="HandleClick">
     <div class="grid">
         <div class="flex items-center gap-2">
-            <img class="favorite-icon h-[20px] w-[20px]" src="@($"icons/{(QR?.Favorite ?? false ? "" : "not-")}favorite.svg")" />
-            <h2 class="max-w-[70vw] break-words text-left font-semibold">@QR?.Value</h2>
+            <img class="favorite-icon h-[20px] w-[20px]" src="@($"icons/{(Code?.Favorite ?? false ? "" : "not-")}favorite.svg")" />
+            <h2 class="max-w-[70vw] break-words text-left font-semibold">@Code?.Value</h2>
         </div>
         <div class="mt-2 flex gap-4 text-sm text-gray-500">
-            <h2>@QR?.Format</h2>
-            <h2>@QR?.Type</h2>
-            <h2>@QR?.Source</h2>
+            <h2>@Code?.Format</h2>
+            <h2>@Code?.Type</h2>
+            <h2>@Code?.Source</h2>
         </div>
     </div>
     <div class="grid place-items-end text-sm">
-        <img class="qr-rect-arrow h-[20px] w-[20px]" src="icons/arrow.svg" />
+        <img class="rect-arrow h-[20px] w-[20px]" src="icons/arrow.svg" />
     </div>
 </div>
 
 @code {
     [Parameter]
-    public QRModel? QR { get; set; }
+    public CodeModel? Code { get; set; }
 
     [Parameter]
     public EventCallback<MouseEventArgs> HandleClick { get; set; }

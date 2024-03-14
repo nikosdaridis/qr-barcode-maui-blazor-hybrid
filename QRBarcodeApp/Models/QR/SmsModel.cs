@@ -10,9 +10,9 @@ namespace QRBarcodeApp.Models.QR
         public ulong? Phone { get; set; }
 
         [Required(ErrorMessage = "Message is required")]
-        public string Message { get; set; } = "";
+        public string? Message { get; set; }
 
-        public string? GetValue()
+        public string GetValue()
         {
             return $"smsto:{Phone}:{Message}";
         }

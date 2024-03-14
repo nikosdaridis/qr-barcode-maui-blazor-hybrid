@@ -1,62 +1,18 @@
 ﻿@page "/favorites"
 
-@inject NavigationManager NavigationManager
+@inherits CodeListBase
+
 @inject LocalStorageService LocalStorageService
-@inject IJSRuntime JSRuntime
 
-<TabHeader Name="Favorites" HandleInput="HandleInput" InputPlaceholder="Search Favorites" />
-
-<div class="main-content grid w-[90vw] gap-2">
-    @if (!_isLoading)
-    {
-        @if (_qrListFiltered?.Any() == true)
-        {
-            @foreach (QRModel qr in _qrListFiltered)
-            {
-                <QRRectangle QR="@qr" HandleClick='() => NavigationManager.NavigateTo($"/details/{qr.Id}")' />
-            }
-
-        }
-        else
-        {
-            <h1 class="mt-20 text-3xl font-bold">No Favorites</h1>
-        }
-    }
-</div>
-
-<TabBar />
+@{
+    base.BuildRenderTree(__builder);
+}
 
 @code {
-    private List<QRModel>? _qrList;
-    private List<QRModel>? _qrListFiltered;
-    private bool _isLoading = true;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task LoadComponentDataAsync()
     {
-        if (firstRender)
-            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
-    }
-
-    public override async Task SetParametersAsync(ParameterView parameters)
-    {
-        _isLoading = true;
-        await base.SetParametersAsync(parameters);
-
         await LocalStorageService.SaveActiveTabAsync("/favorites");
-        _qrList = (await LocalStorageService.GetQRAllAsync()).Where(qr => qr.Favorite == true).ToList();
-        _qrListFiltered = _qrList;
-
-        _isLoading = false;
-        StateHasChanged();
-    }
-
-    private void HandleInput(ChangeEventArgs e)
-    {
-        string? searchInput = e.Value?.ToString();
-
-        if (!string.IsNullOrWhiteSpace(searchInput) && _qrList?.Any() == true)
-            _qrListFiltered = _qrList.Where(qr => qr?.Value is not null && qr.Value.Contains(searchInput, StringComparison.OrdinalIgnoreCase)).ToList();
-        else
-            _qrListFiltered = _qrList;
+        codeList = (await LocalStorageService.GetCodesAsync()).Where(code => code.Favorite == true).ToList();
+        tabName = "Favorites";
     }
 }

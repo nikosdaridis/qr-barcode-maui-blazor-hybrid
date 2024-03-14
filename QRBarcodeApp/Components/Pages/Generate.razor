@@ -18,7 +18,7 @@
 
     <h1 class="mt-4 text-xl">Barcode</h1>
 
-    @foreach (string format in new[] { "Code128", "Code39", "Code93", "CodaBar", "Ean13", "Ean8", "Upca", "Upce", "I2OF5" })
+    @foreach (string format in new[] { "Code128", "Code39", "Code93", "CodaBar", "Ean13", "Ean8", "Itf", "Upca", "Upce", "I2OF5" })
     {
         <GenerateRectangle IconPath="icons/generate/barcode.svg"
                            Text=@format
