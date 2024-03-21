@@ -1,3 +1,4 @@
+// Adjusts top and bottom content margin according to TabHeader and TabBar
 function adjustContentMargin() {
     const tabHeader = document.querySelector(".tab-header"),
         tabBar = document.querySelector(".tab-bar"),
@@ -10,6 +11,7 @@ function adjustContentMargin() {
     mainContent.style.marginBottom = `${tabBar.offsetHeight + 10}px`;
 }
 
+// Plays button animation
 function playButtonAnimation(element) {
     if (!element)
         return;

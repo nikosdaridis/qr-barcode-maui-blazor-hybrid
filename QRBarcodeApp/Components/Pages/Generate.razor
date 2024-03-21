@@ -7,7 +7,7 @@
 <TabHeader Name="Generate" />
 
 <div class="main-content grid w-[90vw] gap-2">
-    <h1 class="text-xl">QR</h1>
+    <h1 class="text-2xl font-semibold">QR</h1>
 
     @foreach (string type in new[] { "Text", "Url", "Email", "WiFi", "GeographicCoordinates", "ContactInfo", "CalendarEvent", "Phone", "Sms" })
     {
@@ -16,27 +16,46 @@
                            HandleClick="@(() => NavigationManager.NavigateTo($"/generate/{type}/QRCode"))" />
     }
 
-    <h1 class="mt-4 text-xl">Barcode</h1>
+    <h1 class="mt-4 text-2xl font-semibold">Barcode</h1>
 
     @foreach (string format in new[] { "Code128", "Code39", "Code93", "CodaBar", "Ean13", "Ean8", "Itf", "Upca", "Upce", "I2OF5" })
     {
         <GenerateRectangle IconPath="icons/generate/barcode.svg"
                            Text=@format
-                           HandleClick="@(() => NavigationManager.NavigateTo($"/generate/Text/{format}"))" />
+                           HandleClick="@(() => NavigationManager.NavigateTo($"/generate/{GetBarcodeType(format)}/{format}"))" />
     }
 </div>
 
 <TabBar />
 
 @code {
+    /// <summary>
+    /// Saves active tab
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        await LocalStorageService.SaveActiveTabAsync("/generate");
+    }
+
+    /// <summary>
+    /// Adjusts content margin according to TabHeader and TabBar
+    /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
             await JSRuntime.InvokeVoidAsync("adjustContentMargin");
     }
 
-    protected override async Task OnInitializedAsync()
+    /// <summary>
+    /// Retrieves Barcode type based on format
+    /// </summary>
+    private string GetBarcodeType(string format)
     {
-        await LocalStorageService.SaveActiveTabAsync("/generate");
+        return format switch
+        {
+            "Code128" or "Code39" or "Code93" or "CodaBar" or "Itf" or "I2OF5" => "Text",
+            "Ean13" or "Ean8" or "Upca" or "Upce" => "Product",
+            _ => "Text"
+        };
     }
 }

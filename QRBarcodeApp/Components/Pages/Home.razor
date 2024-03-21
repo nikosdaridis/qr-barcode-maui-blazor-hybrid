@@ -4,6 +4,9 @@
 @inject LocalStorageService LocalStorageService
 
 @code {
+    /// <summary>
+    /// Retrieves active tab and navigates to active tab or navigates to history tab and displays camera scanner popup
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();

@@ -11,6 +11,9 @@ public partial class CameraScanner : Popup
     private readonly LocalStorageService _localStorageService;
     private bool _scanned;
 
+    /// <summary>
+    /// Sets up camera scanner popup, asks for camera permissions and enables camera
+    /// </summary>
     public CameraScanner(NavigationManager navigationManager, LocalStorageService localStorageService)
     {
         _navigationManager = navigationManager;
@@ -21,6 +24,9 @@ public partial class CameraScanner : Popup
         Scanner.CameraEnabled = true;
     }
 
+    /// <summary>
+    /// Handles QR and Barcode detection, saves scanned code and navigates to details tab
+    /// </summary>
     private async void CameraView_OnDetectionFinished(object sender, OnDetectionFinishedEventArg e)
     {
         if (e?.BarcodeResults?.FirstOrDefault() is null || _scanned)
@@ -33,16 +39,25 @@ public partial class CameraScanner : Popup
         _navigationManager.NavigateTo($"/details/{id}");
     }
 
+    /// <summary>
+    /// Invokes camera click handler
+    /// </summary>
     private void HandleFrameCameraClick(object sender, EventArgs e)
     {
         HandleCameraClick(CameraButton, e);
     }
 
+    /// <summary>
+    /// Invokes torch click handler 
+    /// </summary>
     private void HandleFrameTorchClick(object sender, EventArgs e)
     {
         HandleTorchClick(TorchButton, e);
     }
 
+    /// <summary>
+    /// Toggles camera facing direction
+    /// </summary>
     private void HandleCameraClick(object sender, EventArgs e)
     {
         if (CameraButton is null)
@@ -64,6 +79,9 @@ public partial class CameraScanner : Popup
             Scanner.CameraFacing = CameraFacing.Back;
     }
 
+    /// <summary>
+    /// Toggles flashlight if not front camera
+    /// </summary>
     private void HandleTorchClick(object sender, EventArgs e)
     {
         if (TorchButton is null || Scanner.CameraFacing == CameraFacing.Front)
@@ -74,6 +92,9 @@ public partial class CameraScanner : Popup
         Scanner.TorchOn = !Scanner.TorchOn;
     }
 
+    /// <summary>
+    /// Toggles button source image between default and active state
+    /// </summary>
     private void ToggleImageSource(ImageButton button, string defaultImage, string activeImage)
     {
         if (string.IsNullOrWhiteSpace(button?.Source?.ToString()))

@@ -22,6 +22,9 @@ else
     private string? _activeTab;
     private bool _isPopupShown;
 
+    /// <summary>
+    /// Sets component parameters and active tab from URL
+    /// </summary>
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         await base.SetParametersAsync(parameters);
@@ -29,6 +32,9 @@ else
         _activeTab = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/').FirstOrDefault();
     }
 
+    /// <summary>
+    /// Displays camera scanner popup
+    /// </summary>
     private async Task ShowCameraScannerPopupAsync()
     {
         if (_isPopupShown)

@@ -12,16 +12,16 @@ namespace QRBarcodeApp.Services
 {
     public class CodeService(LocalStorageService localStorageService, NavigationManager navigationManager)
     {
+        /// <summary>
+        /// Generates QR and Barcode byte array
+        /// </summary>
         public static void GenerateCodeBytes(CodeModel code, ref byte[] codeBytes)
         {
-            if (string.IsNullOrWhiteSpace(code.Value))
-                return;
-
-            BarcodeType codeType = BarcodeTypeMapper.MapScanFormatToBarcodeType(code.Format);
+            BarcodeType barcodeType = BarcodeTypeMapper.ToBarcodeType(code.Format!);
 
             try
             {
-                if (codeType == BarcodeType.Unspecified)
+                if (barcodeType == BarcodeType.Unspecified)
                 {
                     QRCodeGenerator qrGenerator = new QRCodeGenerator();
                     QRCodeData qrCodeData = qrGenerator.CreateQrCode(code.Value, QRCodeGenerator.ECCLevel.L);
@@ -34,7 +34,9 @@ namespace QRBarcodeApp.Services
                     Barcode barcode = new Barcode();
                     barcode.IncludeLabel = true;
                     SKImage barcodeImage;
-                    barcodeImage = barcode.Encode(codeType, code.Value, Math.Max(400, code.Value.Length * 15), 400);
+                    int width = Math.Max(300, code.Value!.Length * 16);
+                    int height = Math.Max(200, Math.Min(500, code.Value.Length * 8));
+                    barcodeImage = barcode.Encode(barcodeType, code.Value, width, height);
 
                     codeBytes = barcodeImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
                 }
@@ -45,14 +47,17 @@ namespace QRBarcodeApp.Services
             }
         }
 
+        /// <summary>
+        /// Toggles code favorite property
+        /// </summary>
         public async Task<CodeModel?> ToggleCodeFavoriteAsync(string id, CodeModel updatedCode)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                return null;
-
             return await localStorageService.UpdateCodeAsync(id, updatedCode);
         }
 
+        /// <summary>
+        /// Saves code image to the gallery and displays toast notification
+        /// </summary>
         public static async Task SaveCodeToGalleryAsync(byte[] codeBytes, string format)
         {
             if (codeBytes.Length == 0)
@@ -62,6 +67,9 @@ namespace QRBarcodeApp.Services
             await Toast.Make($"Saved {format} to Gallery").Show();
         }
 
+        /// <summary>
+        /// Shares code image by invoking the share dialog
+        /// </summary>
         public static async Task ShareCodeAsync(byte[] codeBytes, string format)
         {
             if (codeBytes.Length == 0)
@@ -77,6 +85,9 @@ namespace QRBarcodeApp.Services
             });
         }
 
+        /// <summary>
+        /// Deletes code, displays toast notification and navigates to active tab
+        /// </summary>
         public async Task DeleteCodeAsync(CodeModel codeToDelete)
         {
             if (!await localStorageService.DeleteCodeAsync(codeToDelete.Id))
@@ -86,7 +97,10 @@ namespace QRBarcodeApp.Services
             navigationManager.NavigateTo(await localStorageService.GetActiveTabAsync());
         }
 
-        public static void GetCodeImageBase64(byte[] codeBytes, ref string? imageBase64)
+        /// <summary>
+        /// Converts code bytes to a Base64 png image
+        /// </summary>
+        public static void GetCodeBase64PngImage(byte[] codeBytes, ref string? imageBase64)
         {
             if (codeBytes.Length == 0)
                 return;

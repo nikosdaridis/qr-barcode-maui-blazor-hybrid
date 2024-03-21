@@ -31,13 +31,13 @@
                         propertyValue = ((DateTime)propertyValue).ToString("yyyy-MM-ddTHH:mm");
 
                     <input class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                           type="@GetInputType(property.PropertyType)"
+                           type="@GetInputType(property)"
                            value="@propertyValue"
                            step="@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")"
                            @onchange="@((ChangeEventArgs e) => SetValue(property, e.Value))" />
                 }
             }
-            <button class="mt-4 text-2xl p-3 bg-[--primary-color] rounded-xl" type="submit" @ref="_generateButton"
+            <button class="mt-4 rounded-xl bg-[--primary-color] p-3 text-2xl" type="submit" @ref="_generateButton"
                     @onclick="@(async () => await JSRuntime.InvokeVoidAsync("playButtonAnimation", _generateButton))">
                 Generate
             </button>
@@ -57,12 +57,18 @@
     private IGenerateModel? _model;
     private ElementReference _generateButton;
 
+    /// <summary>
+    /// Adjusts content margin according to TabHeader and TabBar
+    /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
             await JSRuntime.InvokeVoidAsync("adjustContentMargin");
     }
 
+    /// <summary>
+    /// Initializes code generate model based on type and format
+    /// </summary>
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -103,19 +109,38 @@
         };
     }
 
-    private string GetInputType(System.Type propertyType)
+    /// <summary>
+    /// Retrieves input type for property based on property name or property type
+    /// </summary>
+    private string GetInputType(PropertyInfo property)
     {
-        System.Type type = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
+        string inputType = "";
 
-        return type.Name switch
+        inputType = property.Name switch
+        {
+            "Ean13" or "Ean8" or "Itf" or "Upca" or "Upce" or "I2OF5" => "number",
+            _ => ""
+        };
+
+        if (!string.IsNullOrWhiteSpace(inputType))
+            return inputType;
+
+        System.Type type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+        inputType = type.Name switch
         {
             "String" => "text",
             "UInt64" or "Double" => "number",
             "DateTime" => "datetime-local",
-            _ => "text",
+            _ => "text"
         };
+
+        return inputType;
     }
 
+    /// <summary>
+    /// Sets value of property on generate model
+    /// </summary>
     private void SetValue(PropertyInfo property, object? value)
     {
         if (string.IsNullOrWhiteSpace(value?.ToString()))
@@ -133,8 +158,23 @@
         }
     }
 
+    /// <summary>
+    /// Sets type to Isbn if Ean13 starts with 978 or 979
+    /// </summary>
+    private void CheckBarcodeISBNType()
+    {
+        if (_model!.GetValue().StartsWith("978") || _model.GetValue().StartsWith("979"))
+            Type = "Isbn";
+    }
+
+    /// <summary>
+    /// Saves generated code and navigates to details tab
+    /// </summary>
     private async Task HandleSubmitAsync()
     {
+        if (Format == "Ean13")
+            CheckBarcodeISBNType();
+
         string id = await LocalStorageService.SaveCodeAsync(_model!.GetValue(), Type!, Format!, "Generated");
 
         NavigationManager.NavigateTo($"/details/{id}");

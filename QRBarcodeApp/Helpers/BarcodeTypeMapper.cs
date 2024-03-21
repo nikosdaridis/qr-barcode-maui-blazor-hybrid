@@ -4,9 +4,12 @@ namespace QRBarcodeApp.Helpers
 {
     public static class BarcodeTypeMapper
     {
-        public static BarcodeType MapScanFormatToBarcodeType(string? scanFormat)
+        /// <summary>
+        /// Converts code format to BarcodeType
+        /// </summary>
+        public static BarcodeType ToBarcodeType(string format)
         {
-            return scanFormat switch
+            return format switch
             {
                 "Code128" => BarcodeType.Code128,
                 "Code39" => BarcodeType.Code39,

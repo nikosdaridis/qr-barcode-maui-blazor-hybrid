@@ -1,6 +1,6 @@
 ﻿@page "/history"
 
-@inherits CodeListBase
+@inherits CodesBase
 
 @inject LocalStorageService LocalStorageService
 
@@ -9,6 +9,9 @@
 }
 
 @code {
+    /// <summary>
+    /// Overrides base method to load all codes and set active tab
+    /// </summary>
     protected override async Task LoadComponentDataAsync()
     {
         await LocalStorageService.SaveActiveTabAsync("/history");

@@ -31,6 +31,9 @@
     private List<CodeModel>? _codeListFiltered;
     private bool _adjustedContentMargin;
 
+    /// <summary>
+    /// Adjusts content margin according to TabHeader and TabBar
+    /// </summary>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!string.IsNullOrWhiteSpace(tabName) && !_adjustedContentMargin)
@@ -40,6 +43,9 @@
         }
     }
 
+    /// <summary>
+    /// Sets component parameters and loads derived component data
+    /// </summary>
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         await base.SetParametersAsync(parameters);
@@ -48,11 +54,17 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Loads derived component data
+    /// </summary>
     protected virtual async Task LoadComponentDataAsync()
     {
         await Task.Yield();
     }
 
+    /// <summary>
+    /// Filters list of codes based on search input
+    /// </summary>
     private void HandleInput(ChangeEventArgs e)
     {
         string? searchInput = e.Value?.ToString();

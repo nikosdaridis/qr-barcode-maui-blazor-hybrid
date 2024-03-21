@@ -4,7 +4,7 @@
 {
     <div>
         <button class="@GetButtonClass() rounded-full bg-[--primary-color] p-3"
-                @ref="_actionButton" @onclick="HandleOnClickAsync">
+                @ref="_button" @onclick="HandleOnClickAsync">
             <img class="h-[30px] w-[30px]" src="@IconPath" />
         </button>
         <h3 class="mt-2 text-sm">@Text</h3>
@@ -21,8 +21,11 @@
     [Parameter]
     public EventCallback<MouseEventArgs> HandleClick { get; set; }
 
-    private ElementReference _actionButton;
+    private ElementReference _button;
 
+    /// <summary>
+    /// Retrieves button CSS class based on icon file path
+    /// </summary>
     private string GetButtonClass()
     {
         string baseClass = IconPath switch
@@ -36,9 +39,12 @@
         return $"{baseClass}-button";
     }
 
+    /// <summary>
+    /// Plays button animation and invokes callback
+    /// </summary>
     private async Task HandleOnClickAsync(MouseEventArgs args)
     {
-        await JSRuntime.InvokeVoidAsync("playButtonAnimation", _actionButton);
+        await JSRuntime.InvokeVoidAsync("playButtonAnimation", _button);
 
         if (HandleClick.HasDelegate)
             await HandleClick.InvokeAsync(args);
