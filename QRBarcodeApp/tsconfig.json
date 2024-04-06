@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": [ "ES2020", "DOM", "DOM.Iterable" ],
+    "module": "commonjs",
+    "outDir": "./wwwroot/",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "strict": true
+  },
+  "files": [ "./wwwroot/app.ts" ]
+}

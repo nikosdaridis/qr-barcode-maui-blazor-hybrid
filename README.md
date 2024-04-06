@@ -17,10 +17,12 @@
 
 1. Node.js and npm has to be installed for Tailwind to build CSS
 
-2. Launch with Emulator or Local Device
+2. TypeScript has to be installed to compile to JavaScript
 
-3. Open a terminal and run this to watch for Tailwind changes
+3. Launch with Emulator or Physical Device
+
+4. Open a terminal and run this to watch for Tailwind changes
 
    ```sh
-   npm run watch
+   npm run watch-tailwind
    ```

@@ -1,11 +1,15 @@
 {
   "scripts": {
-    "build": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css",
-    "watch": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css --watch",
-    "release": "cross-env NODE_ENV=production npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css --minify"
+    "build-typescript": "tsc",
+    "release-typescript": "tsc && uglifyjs ./wwwroot/app.js -o ./wwwroot/app.js -c -m",
+    "build-tailwind": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css",
+    "watch-tailwind": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css --watch",
+    "release-tailwind": "cross-env NODE_ENV=production npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css --minify"
   },
   "devDependencies": {
+    "typescript": "^5.4.4",
+    "uglify-js": "^3.17.4",
     "cross-env": "^7.0.3",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.3"
   }
 }
