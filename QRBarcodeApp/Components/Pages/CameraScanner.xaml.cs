@@ -27,7 +27,7 @@ public partial class CameraScanner : Popup
     /// <summary>
     /// Handles QR and Barcode detection, saves scanned code and navigates to details tab
     /// </summary>
-    private async void CameraView_OnDetectionFinished(object sender, OnDetectionFinishedEventArg e)
+    private async void CameraViewOnDetectionFinished(object sender, OnDetectionFinishedEventArg e)
     {
         if (e?.BarcodeResults?.FirstOrDefault() is null || _scanned)
             return;

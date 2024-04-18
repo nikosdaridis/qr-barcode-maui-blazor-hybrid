@@ -9,11 +9,12 @@
         <scanner:CameraView 
         AbsoluteLayout.LayoutFlags="All"
         AbsoluteLayout.LayoutBounds="0,0,1,1"
-        OnDetectionFinished="CameraView_OnDetectionFinished"
+        OnDetectionFinished="CameraViewOnDetectionFinished"
         CaptureQuality="High"
         ForceInverted="False"
         TapToFocusEnabled="True"
         BarcodeSymbologies="All"
+        PoolingInterval="300"
         x:Name="Scanner"/>
 
         <Grid ColumnDefinitions="*, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,0.2">
