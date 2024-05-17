@@ -54,13 +54,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BarcodeLib" Version="3.0.3" />
-		<PackageReference Include="BarcodeScanning.Native.Maui" Version="1.4.3" />
+		<PackageReference Include="BarcodeLib" Version="3.1.1" />
+		<PackageReference Include="BarcodeScanning.Native.Maui" Version="1.5.2" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.1" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.20" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.20" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.20" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.40" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="8.0.40" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="QRCoder-ImageSharp" Version="0.10.0" />
 		<PackageReference Include="Xamarin.MediaGallery" Version="2.2.1" />
@@ -91,7 +91,7 @@
 		<Touch Files="$(NpmLastInstall)" AlwaysCreate="true" />
 	</Target>
 
-	<Target Name="CheckForTypeScript" BeforeTargets="CompileTypeScript">
+	<Target Name="CheckForTypeScript" BeforeTargets="CompileTypeScript" DependsOnTargets="NpmInstall">
 		<Exec Command="tsc -v" ContinueOnError="true">
 			<Output TaskParameter="ExitCode" PropertyName="TypeScriptCheckExitCode" />
 		</Exec>
@@ -99,13 +99,13 @@
 	</Target>
 
 	<Target Name="CompileTypeScript" BeforeTargets="CompileTailwindCSS" Condition="Exists('tsconfig.json')">
-		<Exec Command="npm run build-typescript" Condition="'$(Configuration)' == 'Debug'" />
-		<Exec Command="npm run release-typescript" Condition="'$(Configuration)' == 'Release'" />
+		<Exec Command="npm run typescript-build" Condition="'$(Configuration)' == 'Debug'" />
+		<Exec Command="npm run typescript-release" Condition="'$(Configuration)' == 'Release'" />
 	</Target>
 
-	<Target Name="CompileTailwindCSS" BeforeTargets="Compile">
-		<Exec Command="npm run build-tailwind" Condition="'$(Configuration)' == 'Debug'" />
-		<Exec Command="npm run release-tailwind" Condition="'$(Configuration)' == 'Release'" />
+	<Target Name="CompileTailwindCSS" BeforeTargets="PreBuildEvent">
+		<Exec Command="npm run tailwind-build" Condition="'$(Configuration)' == 'Debug'" />
+		<Exec Command="npm run tailwind-release" Condition="'$(Configuration)' == 'Release'" />
 	</Target>
 
 </Project>
