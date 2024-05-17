@@ -15,14 +15,12 @@
 
 ## 🛠 Installation
 
-1. Node.js and npm has to be installed for Tailwind to build CSS
+1. Node.js, npm and TypeScript has to be installed to build the project
 
-2. TypeScript has to be installed to compile to JavaScript
+2. Launch with Physical Device or Emulator
 
-3. Launch with Emulator or Physical Device
-
-4. Open a terminal and run this to watch for Tailwind changes
+3. Watch for TypeScript and Tailwind changes by opening a terminal and running
 
    ```sh
-   npm run watch-tailwind
+   npm run dev-watch
    ```

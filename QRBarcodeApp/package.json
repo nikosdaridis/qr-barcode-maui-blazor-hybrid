@@ -1,12 +1,15 @@
 {
   "scripts": {
+    "dev-watch": "concurrently \"npm run typescript-watch\" \"npm run tailwind-watch\"",
     "typescript-build": "tsc",
+    "typescript-watch": "tsc --watch",
     "typescript-release": "tsc && uglifyjs ./wwwroot/app.js -o ./wwwroot/app.js -c -m",
     "tailwind-build": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css",
     "tailwind-watch": "cross-env NODE_ENV=development npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css --watch",
     "tailwind-release": "cross-env NODE_ENV=production npx tailwindcss -i ./wwwroot/tailwind.css -o ./wwwroot/tailwind-app.css --minify"
   },
   "devDependencies": {
+    "concurrently": "^8.2.2",
     "typescript": "^5.4.5",
     "uglify-js": "^3.17.4",
     "cross-env": "^7.0.3",
