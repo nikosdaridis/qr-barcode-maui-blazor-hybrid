@@ -31,10 +31,12 @@ jobs:
         run: npm test
         working-directory: ${{ env.PROJECT_DIR }}
 
+      - name: Authenticate gh CLI
+        run: echo "${{ secrets.PAT_TOKEN }}" | gh auth login --with-token
+
       - name: Merge Dependabot PR
         id: merge
-        run: |
-          gh pr merge ${{ github.event.pull_request.number }} --auto --squash --delete-branch
+        run: gh pr merge ${{ github.event.pull_request.number }} --auto --squash --delete-branch
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
 
@@ -47,6 +49,9 @@ jobs:
       PROJECT_DIR: ${{ github.workspace }}/QRBarcodeApp
 
     steps:
+      - name: Authenticate gh CLI
+        run: echo "${{ secrets.PAT_TOKEN }}" | gh auth login --with-token
+
       - name: Close merged Dependabot branches
         run: |
           gh api --method GET repos/${{ github.repository }}/pulls --state merged --base main --head dependabot --jq '.[].head.ref' | while read branch; do
