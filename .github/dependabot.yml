@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # Configuration for NuGet
+  - package-ecosystem: "nuget"
+    directory: "/QRBarcodeApp"
+    schedule:
+      interval: "daily"
+
+  # Configuration for npm
+  - package-ecosystem: "npm"
+    directory: "/QRBarcodeApp"
+    schedule:
+      interval: "daily"

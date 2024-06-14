@@ -1,0 +1,49 @@
+name: Auto Merge Dependabot PRs and Delete Branches
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+  auto-merge:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Merge Dependabot PR
+        id: merge
+        run: |
+          gh pr merge ${{ github.event.pull_request.number }} --auto --squash --delete-branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  delete-branch:
+    if: github.event.pull_request.merged == true && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    needs: auto-merge
+
+    steps:
+      - name: Close merged Dependabot branches
+        run: |
+          gh api --method GET repos/${{ github.repository }}/pulls --state merged --base main --head dependabot --jq '.[].head.ref' | while read branch; do
+            echo "Deleting branch: $branch"
+            gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/$branch
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
