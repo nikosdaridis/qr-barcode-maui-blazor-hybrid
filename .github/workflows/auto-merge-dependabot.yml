@@ -36,7 +36,7 @@ jobs:
         run: |
           gh pr merge ${{ github.event.pull_request.number }} --auto --squash --delete-branch
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
 
   delete-branch:
     if: github.event.pull_request.merged == true && github.actor == 'dependabot[bot]'
@@ -54,4 +54,4 @@ jobs:
             gh api -X DELETE repos/${{ github.repository }}/git/refs/heads/$branch
           done
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
