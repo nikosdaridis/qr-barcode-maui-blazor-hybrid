@@ -26,10 +26,18 @@ jobs:
         run: |
           echo "Dependency Names: ${{ steps.metadata.outputs.dependency-names }}"
           echo "Update Type: ${{ steps.metadata.outputs.update-type }}"
+          echo "Labels: ${{ github.event.pull_request.labels }}"
           echo "PR URL: ${{ github.event.pull_request.html_url }}"
 
+      - name: Verify Dependabot actor
+        run: |
+          if [[ "${{ github.event.sender.type }}" != "Bot" || "${{ github.event.sender.login }}" != "dependabot[bot]" ]]; then
+            echo "This PR is not from Dependabot. Exiting."
+            exit 1
+          fi
+
       - name: Enable auto-merge for Dependabot PRs
-        if: contains(steps.metadata.outputs.dependency-names, 'my-dependency') && steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        if: contains(github.event.pull_request.labels.*.name, 'automerge')
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
