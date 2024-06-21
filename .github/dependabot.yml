@@ -5,9 +5,13 @@ updates:
     directory: "/QRBarcodeApp"
     schedule:
       interval: "daily"
+    labels:
+      - "automerge"
 
   # Configuration for npm
   - package-ecosystem: "npm"
     directory: "/QRBarcodeApp"
     schedule:
       interval: "daily"
+    labels:
+      - "automerge"
