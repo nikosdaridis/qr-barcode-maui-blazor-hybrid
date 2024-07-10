@@ -10,9 +10,9 @@
     <div class="main-content grid w-[90vw] gap-2">
         @if (_codeListFiltered?.Any() ?? false)
         {
-            foreach (CodeModel code in _codeListFiltered)
+            foreach (KeyValuePair<string, CodeModel> code in _codeListFiltered)
             {
-                <CodeRectangle Code="code" HandleClick='() => NavigationManager.NavigateTo($"/details/{code.Id}")' />
+                <CodeRectangle Code="code.Value" HandleClick='() => NavigationManager.NavigateTo($"/details/{code.Key}")' />
             }
         }
         else
@@ -25,10 +25,10 @@
 }
 
 @code {
-    protected List<CodeModel>? codeList;
+    protected Dictionary<string, CodeModel> codeList = [];
     protected string? tabName;
 
-    private List<CodeModel>? _codeListFiltered;
+    private Dictionary<string, CodeModel> _codeListFiltered = [];
     private bool _adjustedContentMargin;
 
     /// <summary>
@@ -71,6 +71,6 @@
 
         _codeListFiltered = string.IsNullOrWhiteSpace(searchInput)
             ? codeList
-            : codeList?.Where(code => code.Value?.Contains(searchInput, StringComparison.OrdinalIgnoreCase) ?? false).ToList();
+            : codeList.Where(code => code.Value.Value?.Contains(searchInput, StringComparison.OrdinalIgnoreCase) ?? false).ToDictionary<string, CodeModel>();
     }
 }

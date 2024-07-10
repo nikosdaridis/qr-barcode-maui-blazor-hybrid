@@ -1,9 +1,9 @@
-﻿namespace QRBarcodeApp.Helpers
+﻿namespace QRBarcodeApp.Interfaces
 {
     public interface IGenerateModel
     {
         /// <summary>
-        /// Retrieves encoded string value of model
+        /// Gets encoded string value
         /// </summary>
         public string GetValue();
     }

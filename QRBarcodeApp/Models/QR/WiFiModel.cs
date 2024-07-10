@@ -1,4 +1,4 @@
-﻿using QRBarcodeApp.Helpers;
+﻿using QRBarcodeApp.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace QRBarcodeApp.Models.QR
@@ -11,7 +11,6 @@ namespace QRBarcodeApp.Models.QR
         [Required(ErrorMessage = "SSID is required")]
         public string? SSID { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
         public string? Password { get; set; }
 
         public string GetValue()

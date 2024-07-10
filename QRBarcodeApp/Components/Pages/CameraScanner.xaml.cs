@@ -5,7 +5,7 @@ using QRBarcodeApp.Services;
 
 namespace QRBarcodeApp.Components.Pages;
 
-public partial class CameraScanner : Popup
+public sealed partial class CameraScanner : Popup
 {
     private readonly NavigationManager _navigationManager;
     private readonly LocalStorageService _localStorageService;
@@ -42,18 +42,14 @@ public partial class CameraScanner : Popup
     /// <summary>
     /// Invokes camera click handler
     /// </summary>
-    private void HandleFrameCameraClick(object sender, EventArgs e)
-    {
+    private void HandleFrameCameraClick(object sender, EventArgs e) =>
         HandleCameraClick(CameraButton, e);
-    }
 
     /// <summary>
     /// Invokes torch click handler 
     /// </summary>
-    private void HandleFrameTorchClick(object sender, EventArgs e)
-    {
+    private void HandleFrameTorchClick(object sender, EventArgs e) =>
         HandleTorchClick(TorchButton, e);
-    }
 
     /// <summary>
     /// Toggles camera facing direction

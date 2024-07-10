@@ -159,21 +159,16 @@
     }
 
     /// <summary>
-    /// Sets type to Isbn if Ean13 starts with 978 or 979
-    /// </summary>
-    private void CheckBarcodeISBNType()
-    {
-        if (_model!.GetValue().StartsWith("978") || _model.GetValue().StartsWith("979"))
-            Type = "Isbn";
-    }
-
-    /// <summary>
     /// Saves generated code and navigates to details tab
     /// </summary>
     private async Task HandleSubmitAsync()
     {
-        if (Format == "Ean13")
-            CheckBarcodeISBNType();
+        if (_model is null)
+            return;
+
+        // Sets type to Isbn if Ean13 starts with 978 or 979
+        if (_model is Ean13Model && _model.GetValue().StartsWith("978") || _model.GetValue().StartsWith("979"))
+            Type = "Isbn";
 
         string id = await LocalStorageService.SaveCodeAsync(_model!.GetValue(), Type!, Format!, "Generated");
 

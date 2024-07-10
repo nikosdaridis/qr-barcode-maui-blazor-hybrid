@@ -15,7 +15,7 @@
     protected override async Task LoadComponentDataAsync()
     {
         await LocalStorageService.SaveActiveTabAsync("/favorites");
-        codeList = (await LocalStorageService.GetCodesAsync()).Where(code => code.Favorite == true).ToList();
         tabName = "Favorites";
+        codeList = (await LocalStorageService.GetCodesAsync()).Where(code => code.Value.Favorite is true).ToDictionary<string, CodeModel>();
     }
 }

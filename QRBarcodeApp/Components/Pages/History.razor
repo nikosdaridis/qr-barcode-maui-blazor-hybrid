@@ -15,7 +15,7 @@
     protected override async Task LoadComponentDataAsync()
     {
         await LocalStorageService.SaveActiveTabAsync("/history");
-        codeList = await LocalStorageService.GetCodesAsync();
         tabName = "History";
+        codeList = await LocalStorageService.GetCodesAsync();
     }
 }

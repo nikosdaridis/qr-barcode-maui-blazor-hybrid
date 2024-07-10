@@ -6,11 +6,6 @@
     public class CodeModel
     {
         /// <summary>
-        /// Unique identifier
-        /// </summary>
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-
-        /// <summary>
         /// Encoded Value
         /// </summary>
         public string? Value { get; set; }

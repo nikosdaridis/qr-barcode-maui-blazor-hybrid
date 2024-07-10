@@ -33,7 +33,7 @@
             }
             <RoundButton IconPath="icons/delete.svg"
                          Text="@((MarkupString)$"Delete<br />{_code.Format}")"
-                         HandleClick=@(async () => await CodeService.DeleteCodeAsync(_code)) />
+                         HandleClick=@(async () => await CodeService.DeleteCodeAsync(Id, _code)) />
         </div>
 
         <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@_code.Value</h2>
@@ -44,7 +44,7 @@
 
 @code {
     [Parameter]
-    public string? Id { get; set; }
+    public string Id { get; set; } = string.Empty;
 
     private CodeModel? _code;
     private string? _codeType;
@@ -67,7 +67,7 @@
     {
         await base.SetParametersAsync(parameters);
 
-        _code = await LocalStorageService.GetCodeAsync(Id!);
+        _code = await LocalStorageService.GetCodeAsync(Id);
 
         if (string.IsNullOrWhiteSpace(_code?.Value) || string.IsNullOrWhiteSpace(_code?.Type) || string.IsNullOrWhiteSpace(_code?.Format))
             return;
@@ -84,10 +84,7 @@
     /// </summary>
     private async Task ToggleFavoriteAsync()
     {
-        if (string.IsNullOrWhiteSpace(_code?.Id))
-            return;
-
-        _code = await CodeService.ToggleCodeFavoriteAsync(_code.Id, new CodeModel { Favorite = !_code.Favorite });
+        _code = await CodeService.ToggleCodeFavoriteAsync(Id, new CodeModel { Favorite = !_code?.Favorite ?? false });
         await Toast.Make($"{(_code?.Favorite ?? false ? "Added to" : "Removed from")} Favorites").Show();
     }
 }

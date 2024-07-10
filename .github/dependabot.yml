@@ -7,6 +7,8 @@ updates:
       interval: "daily"
     labels:
       - "automerge"
+      - "dependencies"
+      - ".NET"
 
   # Configuration for npm
   - package-ecosystem: "npm"
@@ -15,3 +17,5 @@ updates:
       interval: "daily"
     labels:
       - "automerge"
+      - "dependencies"
+      - "javascript"

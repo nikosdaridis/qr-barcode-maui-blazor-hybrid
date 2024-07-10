@@ -1,4 +1,4 @@
-﻿using QRBarcodeApp.Helpers;
+﻿using QRBarcodeApp.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace QRBarcodeApp.Models.Barcode

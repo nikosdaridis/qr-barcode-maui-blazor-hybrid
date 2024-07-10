@@ -7,9 +7,8 @@ namespace QRBarcodeApp.Helpers
         /// <summary>
         /// Converts code format to BarcodeType
         /// </summary>
-        public static BarcodeType ToBarcodeType(string format)
-        {
-            return format switch
+        public static BarcodeType ToBarcodeType(string format) =>
+            format switch
             {
                 "Code128" => BarcodeType.Code128,
                 "Code39" => BarcodeType.Code39,
@@ -23,6 +22,5 @@ namespace QRBarcodeApp.Helpers
                 "I2OF5" => BarcodeType.Industrial2Of5,
                 _ => BarcodeType.Unspecified
             };
-        }
     }
 }

@@ -10,7 +10,7 @@ using BarcodeType = BarcodeStandard.Type;
 
 namespace QRBarcodeApp.Services
 {
-    public class CodeService(LocalStorageService localStorageService, NavigationManager navigationManager)
+    public sealed class CodeService(LocalStorageService localStorageService, NavigationManager navigationManager)
     {
         /// <summary>
         /// Generates QR and Barcode byte array
@@ -50,10 +50,8 @@ namespace QRBarcodeApp.Services
         /// <summary>
         /// Toggles code favorite property
         /// </summary>
-        public async Task<CodeModel?> ToggleCodeFavoriteAsync(string id, CodeModel updatedCode)
-        {
-            return await localStorageService.UpdateCodeAsync(id, updatedCode);
-        }
+        public async Task<CodeModel?> ToggleCodeFavoriteAsync(string id, CodeModel updatedCode) =>
+            await localStorageService.UpdateCodeAsync(id, updatedCode);
 
         /// <summary>
         /// Saves code image to the gallery and displays toast notification
@@ -88,12 +86,12 @@ namespace QRBarcodeApp.Services
         /// <summary>
         /// Deletes code, displays toast notification and navigates to active tab
         /// </summary>
-        public async Task DeleteCodeAsync(CodeModel codeToDelete)
+        public async Task DeleteCodeAsync(string id, CodeModel code)
         {
-            if (!await localStorageService.DeleteCodeAsync(codeToDelete.Id))
+            if (!await localStorageService.DeleteCodeAsync(id))
                 return;
 
-            await Toast.Make($"Deleted {codeToDelete.Format} from History").Show();
+            await Toast.Make($"Deleted {code.Format} from History").Show();
             navigationManager.NavigateTo(await localStorageService.GetActiveTabAsync());
         }
 
