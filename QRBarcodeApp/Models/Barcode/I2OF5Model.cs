@@ -9,9 +9,7 @@ namespace QRBarcodeApp.Models.Barcode
         [RegularExpression(@"^\d+$", ErrorMessage = "I2OF5 must contain digits only")]
         public string? I2OF5 { get; set; }
 
-        public string GetValue()
-        {
-            return I2OF5 ?? "";
-        }
+        public string GetValue() =>
+            I2OF5 ?? string.Empty;
     }
 }

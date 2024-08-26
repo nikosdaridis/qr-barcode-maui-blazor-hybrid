@@ -15,7 +15,7 @@
 
 ## 🛠 Installation
 
-1. Node.js, npm and TypeScript has to be installed to build the project
+1. Node.js has to be installed to build the project
 
 2. Launch with Physical Device or Emulator
 

@@ -2,20 +2,18 @@
 
 @inherits CodesBase
 
-@inject LocalStorageService LocalStorageService
-
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
     /// <summary>
-    /// Overrides base method to load all codes and set active tab
+    /// Loads all codes and set active tab
     /// </summary>
-    protected override async Task LoadComponentDataAsync()
+    protected override async Task LoadComponentDataAsync(LocalStorageService LocalStorageService)
     {
-        await LocalStorageService.SaveActiveTabAsync("/history");
         tabName = "History";
-        codeList = await LocalStorageService.GetCodesAsync();
+        await LocalStorageService.SaveActiveTabAsync("/history");
+        codes = await LocalStorageService.GetCodesAsync();
     }
 }

@@ -9,9 +9,7 @@ namespace QRBarcodeApp.Models.QR
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid Email")]
         public string? Email { get; set; }
 
-        public string GetValue()
-        {
-            return $"mailto:{Email}";
-        }
+        public string GetValue() =>
+            $"mailto:{Email}";
     }
 }

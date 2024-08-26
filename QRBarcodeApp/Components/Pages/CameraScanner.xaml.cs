@@ -91,7 +91,7 @@ public sealed partial class CameraScanner : Popup
     /// <summary>
     /// Toggles button source image between default and active state
     /// </summary>
-    private void ToggleImageSource(ImageButton button, string defaultImage, string activeImage)
+    private static void ToggleImageSource(ImageButton button, string defaultImage, string activeImage)
     {
         if (string.IsNullOrWhiteSpace(button?.Source?.ToString()))
             return;

@@ -2,17 +2,18 @@
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject LocalStorageService LocalStorageService
 
 @if (!string.IsNullOrWhiteSpace(tabName))
 {
-    <TabHeader Name="@tabName" HandleInput="HandleInput" InputPlaceholder="@($"Search {tabName}")" />
+    <TabHeader Name=@tabName HandleInput=HandleInput InputPlaceholder=@($"Search {tabName}") />
 
     <div class="main-content grid w-[90vw] gap-2">
-        @if (_codeListFiltered?.Any() ?? false)
+        @if (_codesFiltered?.Any() ?? false)
         {
-            foreach (KeyValuePair<string, CodeModel> code in _codeListFiltered)
+            foreach (KeyValuePair<string, CodeModel> code in _codesFiltered)
             {
-                <CodeRectangle Code="code.Value" HandleClick='() => NavigationManager.NavigateTo($"/details/{code.Key}")' />
+                <CodeRectangle Code=code.Value HandleClick='() => NavigationManager.NavigateTo($"/details/{code.Key}")' />
             }
         }
         else
@@ -25,10 +26,10 @@
 }
 
 @code {
-    protected Dictionary<string, CodeModel> codeList = [];
     protected string? tabName;
+    protected Dictionary<string, CodeModel> codes = [];
 
-    private Dictionary<string, CodeModel> _codeListFiltered = [];
+    private Dictionary<string, CodeModel> _codesFiltered = [];
     private bool _adjustedContentMargin;
 
     /// <summary>
@@ -49,18 +50,17 @@
     public override async Task SetParametersAsync(ParameterView parameters)
     {
         await base.SetParametersAsync(parameters);
-        await LoadComponentDataAsync();
-        _codeListFiltered = codeList;
-        StateHasChanged();
+        await LoadComponentDataAsync(LocalStorageService);
+        _codesFiltered = codes;
+
+        await InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
     /// Loads derived component data
     /// </summary>
-    protected virtual async Task LoadComponentDataAsync()
-    {
+    protected virtual async Task LoadComponentDataAsync(LocalStorageService LocalStorageService) =>
         await Task.Yield();
-    }
 
     /// <summary>
     /// Filters list of codes based on search input
@@ -69,8 +69,8 @@
     {
         string? searchInput = e.Value?.ToString();
 
-        _codeListFiltered = string.IsNullOrWhiteSpace(searchInput)
-            ? codeList
-            : codeList.Where(code => code.Value.Value?.Contains(searchInput, StringComparison.OrdinalIgnoreCase) ?? false).ToDictionary<string, CodeModel>();
+        _codesFiltered = string.IsNullOrWhiteSpace(searchInput)
+            ? codes
+            : codes.Where(code => code.Value.Value?.Contains(searchInput, StringComparison.OrdinalIgnoreCase) ?? false).ToDictionary<string, CodeModel>();
     }
 }

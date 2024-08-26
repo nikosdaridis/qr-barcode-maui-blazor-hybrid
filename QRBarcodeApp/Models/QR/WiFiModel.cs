@@ -13,9 +13,7 @@ namespace QRBarcodeApp.Models.QR
 
         public string? Password { get; set; }
 
-        public string GetValue()
-        {
-            return $"WIFI:T:{(EncryptionType == "WPA/WPA2" ? "WPA" : "WEP")};S:{SSID};P:{Password};;";
-        }
+        public string GetValue() =>
+            $"WIFI:T:{(EncryptionType == "WPA/WPA2" ? "WPA" : "WEP")};S:{SSID};P:{Password};;";
     }
 }

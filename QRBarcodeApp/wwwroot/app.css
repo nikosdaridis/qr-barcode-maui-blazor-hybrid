@@ -108,7 +108,8 @@ h1:focus {
 
 .tab-bar-nav-link.active img,
 .rect-arrow,
-.action-button img {
+.action-button img,
+.copy-to-clipboard-button {
     filter: invert(54%) sepia(93%) saturate(4264%) hue-rotate(195deg) brightness(98%) contrast(109%);
 }
 

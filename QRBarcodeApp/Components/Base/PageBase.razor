@@ -1,0 +1,14 @@
+﻿@inherits ComponentBase
+
+@inject IJSRuntime JSRuntime
+
+@code {
+    /// <summary>
+    /// Adjusts content margin according to TabHeader and TabBar
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
+    }
+}

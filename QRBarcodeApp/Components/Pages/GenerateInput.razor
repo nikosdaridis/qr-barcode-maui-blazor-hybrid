@@ -1,24 +1,26 @@
-﻿@page "/generate/{Type}/{Format}"
+﻿@inherits PageBase
+
+@page "/generate/{Type}/{Format}"
 
 @inject NavigationManager NavigationManager
-@inject LocalStorageService LocalStorageService
 @inject IJSRuntime JSRuntime
+@inject LocalStorageService LocalStorageService
 
-<TabHeader Name="@($"Generate {Format}")" />
+<TabHeader Name=@($"Generate {Format}") />
 
 <div class="main-content grid w-[90vw] gap-2">
     @if (_model is not null)
     {
-        <EditForm Model=@_model OnValidSubmit="HandleSubmitAsync">
+        <EditForm Model=@_model OnValidSubmit=HandleSubmitAsync>
             <DataAnnotationsValidator />
             <ValidationSummary />
             @foreach (PropertyInfo property in _model.GetType().GetProperties())
             {
-                <label class="my-2" for="@property.Name">@property.Name</label>
+                <label class="my-2" for=@property.Name>@property.Name</label>
                 if (_model is WiFiModel && property.Name == "EncryptionType")
                 {
                     <select class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                            @onchange="@((ChangeEventArgs e) => SetValue(property, e.Value))">
+                            @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value))>
                         <option value="WPA/WPA2">WPA/WPA2</option>
                         <option value="WEP">WEP</option>
                     </select>
@@ -31,14 +33,14 @@
                         propertyValue = ((DateTime)propertyValue).ToString("yyyy-MM-ddTHH:mm");
 
                     <input class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                           type="@GetInputType(property)"
-                           value="@propertyValue"
-                           step="@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")"
-                           @onchange="@((ChangeEventArgs e) => SetValue(property, e.Value))" />
+                           type=@GetInputType(property)
+                           value=@propertyValue
+                           step=@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")
+                           @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value)) />
                 }
             }
-            <button class="mt-4 rounded-xl bg-[--primary-color] p-3 text-2xl" type="submit" @ref="_generateButton"
-                    @onclick="@(async () => await JSRuntime.InvokeVoidAsync("playButtonAnimation", _generateButton))">
+            <button class="mt-4 rounded-xl bg-[--primary-color] p-3 text-2xl" type="submit" @ref=_generateButton
+                    @onclick=@(async () => await JSRuntime.InvokeVoidAsync("playButtonAnimation", _generateButton))>
                 Generate
             </button>
         </EditForm>
@@ -58,15 +60,6 @@
     private ElementReference _generateButton;
 
     /// <summary>
-    /// Adjusts content margin according to TabHeader and TabBar
-    /// </summary>
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
-    }
-
-    /// <summary>
     /// Initializes code generate model based on type and format
     /// </summary>
     protected override void OnParametersSet()
@@ -76,6 +69,7 @@
         if (string.IsNullOrWhiteSpace(Type) || string.IsNullOrWhiteSpace(Format))
             return;
 
+        // Barcode models
         _model = Format switch
         {
             "Code128" => new Code128Model(),
@@ -94,6 +88,7 @@
         if (_model is not null)
             return;
 
+        // QR models
         _model = Type switch
         {
             "Text" => new TextModel(),
@@ -114,12 +109,12 @@
     /// </summary>
     private string GetInputType(PropertyInfo property)
     {
-        string inputType = "";
+        string inputType = string.Empty;
 
         inputType = property.Name switch
         {
             "Ean13" or "Ean8" or "Itf" or "Upca" or "Upce" or "I2OF5" => "number",
-            _ => ""
+            _ => string.Empty
         };
 
         if (!string.IsNullOrWhiteSpace(inputType))
@@ -139,7 +134,7 @@
     }
 
     /// <summary>
-    /// Sets value of property on generate model
+    /// Sets value of property
     /// </summary>
     private void SetValue(PropertyInfo property, object? value)
     {

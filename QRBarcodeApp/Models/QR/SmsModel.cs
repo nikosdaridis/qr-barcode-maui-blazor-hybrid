@@ -12,9 +12,7 @@ namespace QRBarcodeApp.Models.QR
         [Required(ErrorMessage = "Message is required")]
         public string? Message { get; set; }
 
-        public string GetValue()
-        {
-            return $"smsto:{Phone}:{Message}";
-        }
+        public string GetValue() =>
+            $"smsto:{Phone}:{Message}";
     }
 }

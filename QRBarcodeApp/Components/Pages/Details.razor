@@ -1,11 +1,13 @@
-﻿@page "/details/{Id}"
+﻿@inherits PageBase
+
+@page "/details/{Id}"
 
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 @inject LocalStorageService LocalStorageService
 @inject CodeService CodeService
-@inject IJSRuntime JSRuntime
 
-<TabHeader Name="@($"{_code?.Source} {_code?.Format}")" />
+<TabHeader Name=@($"{_code?.Source} {_code?.Format}") />
 
 <div class="main-content flex w-[90vw] flex-col items-center gap-4">
     @if (_code is not null)
@@ -14,29 +16,37 @@
 
         if (!string.IsNullOrWhiteSpace(_imageBase64))
         {
-            <img class="w-[70vw] rounded-lg" src="@_imageBase64" />
+            <img class="w-[70vw] rounded-lg" src=@_imageBase64 />
         }
 
         <div class="flex w-[90vw] items-center justify-center gap-4">
-            <RoundButton IconPath=@($"icons/{(_code.Favorite ?? false ? "" : "not-")}favorite.svg")
-                         Text="@((MarkupString)$"{(_code.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")"
+            <RoundButton JSRuntime=@JSRuntime
+                         IconPath=@($"icons/favorites{(_code.Favorite ?? false ? "-active" : string.Empty)}.svg")
+                         Text=@((MarkupString)$"{(_code.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")
                          HandleClick=@(async () => await ToggleFavoriteAsync()) />
 
             @if (_codeBytes.Length != 0)
             {
-                <RoundButton IconPath="icons/image.svg"
-                             Text="@((MarkupString)"Save To<br />Gallery")"
+                <RoundButton JSRuntime=@JSRuntime
+                             IconPath="icons/image.svg"
+                             Text=@((MarkupString)"Save to<br />Gallery")
                              HandleClick=@(async () => await CodeService.SaveCodeToGalleryAsync(_codeBytes, _code.Format!)) />
-                <RoundButton IconPath="icons/share.svg"
-                             Text="@((MarkupString)$"Share<br />{_code.Format}")"
+
+                <RoundButton JSRuntime=@JSRuntime
+                             IconPath="icons/share.svg"
+                             Text=@((MarkupString)$"Share<br />{_code.Format}")
                              HandleClick=@(async () => await CodeService.ShareCodeAsync(_codeBytes, _code.Format!)) />
             }
-            <RoundButton IconPath="icons/delete.svg"
-                         Text="@((MarkupString)$"Delete<br />{_code.Format}")"
+            <RoundButton JSRuntime=@JSRuntime
+                         IconPath="icons/delete.svg"
+                         Text=@((MarkupString)$"Delete<br />{_code.Format}")
                          HandleClick=@(async () => await CodeService.DeleteCodeAsync(Id, _code)) />
         </div>
 
-        <h2 class="mt-2 max-w-[90vw] break-words text-xl font-bold">@_code.Value</h2>
+        <div class="mt-2 flex items-center justify-center gap-4 text-center">
+            <img class="copy-to-clipboard-button h-[25px] w-[25px]" src="icons/copy.svg" @onclick=@(async () => await CopyToClipboard()) @ref=_copyToClipboardButton />
+            <h2 class="max-w-[80vw] break-words text-xl font-bold">@_code.Value</h2>
+        </div>
     }
 </div>
 
@@ -50,15 +60,7 @@
     private string? _codeType;
     private byte[] _codeBytes = [];
     private string? _imageBase64;
-
-    /// <summary>
-    /// Adjusts content margin according to TabHeader and TabBar
-    /// </summary>
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
-    }
+    private ElementReference? _copyToClipboardButton;
 
     /// <summary>
     /// Sets parameters and generates code bytes and Base64 png image
@@ -76,7 +78,7 @@
         CodeService.GenerateCodeBytes(_code, ref _codeBytes);
         CodeService.GetCodeBase64PngImage(_codeBytes, ref _imageBase64);
 
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
@@ -84,7 +86,21 @@
     /// </summary>
     private async Task ToggleFavoriteAsync()
     {
-        _code = await CodeService.ToggleCodeFavoriteAsync(Id, new CodeModel { Favorite = !_code?.Favorite ?? false });
+        _code = await LocalStorageService.UpdateCodeAsync(Id, new() { Favorite = !_code?.Favorite ?? false });
         await Toast.Make($"{(_code?.Favorite ?? false ? "Added to" : "Removed from")} Favorites").Show();
+    }
+
+    /// <summary>
+    /// Copies code value to clipboard and displays toast notification
+    /// </summary>
+    private async Task CopyToClipboard()
+    {
+        if (string.IsNullOrWhiteSpace(_code?.Value))
+            return;
+
+        await JSRuntime.InvokeVoidAsync("playButtonAnimation", _copyToClipboardButton);
+        await JSRuntime.InvokeVoidAsync("copyToClipboard", _code.Value);
+
+        await Toast.Make("Copied to Clipboard").Show();
     }
 }

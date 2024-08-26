@@ -2,20 +2,18 @@
 
 @inherits CodesBase
 
-@inject LocalStorageService LocalStorageService
-
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
     /// <summary>
-    /// Overrides base method to load favorite codes and set active tab
+    /// Loads favorite codes and set active tab
     /// </summary>
-    protected override async Task LoadComponentDataAsync()
+    protected override async Task LoadComponentDataAsync(LocalStorageService LocalStorageService)
     {
-        await LocalStorageService.SaveActiveTabAsync("/favorites");
         tabName = "Favorites";
-        codeList = (await LocalStorageService.GetCodesAsync()).Where(code => code.Value.Favorite is true).ToDictionary<string, CodeModel>();
+        await LocalStorageService.SaveActiveTabAsync("/favorites");
+        codes = (await LocalStorageService.GetCodesAsync()).Where(code => code.Value.Favorite is true).ToDictionary<string, CodeModel>();
     }
 }

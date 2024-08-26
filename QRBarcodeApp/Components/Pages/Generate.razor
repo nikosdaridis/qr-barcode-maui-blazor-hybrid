@@ -1,8 +1,9 @@
-﻿@page "/generate"
+﻿@inherits PageBase
+
+@page "/generate"
 
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
-@inject IJSRuntime JSRuntime
 
 <TabHeader Name="Generate" />
 
@@ -13,7 +14,7 @@
     {
         <GenerateRectangle IconPath=@($"icons/generate/{type.ToLower()}.svg")
                            Text=@(type != "WiFi" ? Regex.Replace(type, "(\\B[A-Z])", " $1") : type)
-                           HandleClick="@(() => NavigationManager.NavigateTo($"/generate/{type}/QRCode"))" />
+                           HandleClick=@(() => NavigationManager.NavigateTo($"/generate/{type}/QRCode")) />
     }
 
     <h1 class="mt-4 text-2xl font-semibold">Barcode</h1>
@@ -22,7 +23,7 @@
     {
         <GenerateRectangle IconPath="icons/generate/barcode.svg"
                            Text=@format
-                           HandleClick="@(() => NavigationManager.NavigateTo($"/generate/{GetBarcodeType(format)}/{format}"))" />
+                           HandleClick=@(() => NavigationManager.NavigateTo($"/generate/{GetBarcodeType(format)}/{format}")) />
     }
 </div>
 
@@ -32,30 +33,17 @@
     /// <summary>
     /// Saves active tab
     /// </summary>
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() =>
         await LocalStorageService.SaveActiveTabAsync("/generate");
-    }
-
-    /// <summary>
-    /// Adjusts content margin according to TabHeader and TabBar
-    /// </summary>
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-            await JSRuntime.InvokeVoidAsync("adjustContentMargin");
-    }
 
     /// <summary>
     /// Retrieves Barcode type based on format
     /// </summary>
-    private string GetBarcodeType(string format)
-    {
-        return format switch
+    private string GetBarcodeType(string format) =>
+        format switch
         {
             "Code128" or "Code39" or "Code93" or "CodaBar" or "Itf" or "I2OF5" => "Text",
             "Ean13" or "Ean8" or "Upca" or "Upce" => "Product",
             _ => "Text"
         };
-    }
 }

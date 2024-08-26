@@ -1,7 +1,6 @@
 module.exports = {
-    content: ["./**/*.{razor,html}"],
-    theme: {
-
-    },
-    plugins: [],
+    content: [
+        './wwwroot/**/*.html',
+        './Components/**/*.razor',
+    ],
 }

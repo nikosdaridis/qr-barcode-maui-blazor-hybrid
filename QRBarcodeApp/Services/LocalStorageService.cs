@@ -84,7 +84,7 @@ namespace QRBarcodeApp.Services
         /// Gets active tab
         /// </summary>
         public async Task<string> GetActiveTabAsync() =>
-            await localStorageService.GetItemAsync<string>(StorageKeys.ActiveTab) ?? "";
+            await localStorageService.GetItemAsync<string>(StorageKeys.ActiveTab) ?? string.Empty;
 
         /// <summary>
         /// Saves active tab

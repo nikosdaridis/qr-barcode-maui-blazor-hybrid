@@ -9,9 +9,7 @@ namespace QRBarcodeApp.Models.Barcode
         [RegularExpression(@"^[A-Z0-9\-.$/+% ]+$", ErrorMessage = "Code93 must contain only uppercase letters, digits, and special characters (- . $ / + % space)")]
         public string? Code93 { get; set; }
 
-        public string GetValue()
-        {
-            return Code93 ?? "";
-        }
+        public string GetValue() =>
+            Code93 ?? string.Empty;
     }
 }

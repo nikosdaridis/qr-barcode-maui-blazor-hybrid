@@ -1,19 +1,26 @@
-﻿@inject IJSRuntime JSRuntime
-
-@if (!string.IsNullOrWhiteSpace(IconPath))
+﻿@if (!string.IsNullOrWhiteSpace(IconPath))
 {
     <div>
         <button class="@GetButtonClass() rounded-full bg-[--primary-color] p-3"
-                @ref="_button" @onclick="HandleOnClickAsync">
-            <img class="h-[30px] w-[30px]" src="@IconPath" />
+                @ref=_button @onclick=HandleOnClickAsync>
+            <img class=@IconCSS src=@IconPath />
         </button>
-        <h3 class="mt-2 text-sm">@Text</h3>
+        @if (Text is not null)
+        {
+            <h3 class="mt-2 text-sm">@Text</h3>
+        }
     </div>
 }
 
 @code {
     [Parameter]
+    public IJSRuntime? JSRuntime { get; set; }
+
+    [Parameter]
     public string? IconPath { get; set; }
+
+    [Parameter]
+    public string? IconCSS { get; set; } = "h-[30px] w-[30px]";
 
     [Parameter]
     public MarkupString? Text { get; set; }
@@ -44,7 +51,8 @@
     /// </summary>
     private async Task HandleOnClickAsync(MouseEventArgs args)
     {
-        await JSRuntime.InvokeVoidAsync("playButtonAnimation", _button);
+        if (JSRuntime is not null)
+            await JSRuntime.InvokeVoidAsync("playButtonAnimation", _button);
 
         if (HandleClick.HasDelegate)
             await HandleClick.InvokeAsync(args);

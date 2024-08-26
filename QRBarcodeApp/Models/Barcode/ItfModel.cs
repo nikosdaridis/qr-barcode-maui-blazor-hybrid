@@ -9,9 +9,7 @@ namespace QRBarcodeApp.Models.Barcode
         [RegularExpression(@"^(\d{2})+$", ErrorMessage = "Itf must contain an even number of digits")]
         public string? Itf { get; set; }
 
-        public string GetValue()
-        {
-            return Itf ?? "";
-        }
+        public string GetValue() =>
+            Itf ?? string.Empty;
     }
 }

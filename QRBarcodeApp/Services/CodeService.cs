@@ -2,7 +2,6 @@
 using CommunityToolkit.Maui.Alerts;
 using Microsoft.AspNetCore.Components;
 using NativeMedia;
-using QRBarcodeApp.Helpers;
 using QRBarcodeApp.Models;
 using QRCoder;
 using SkiaSharp;
@@ -17,41 +16,52 @@ namespace QRBarcodeApp.Services
         /// </summary>
         public static void GenerateCodeBytes(CodeModel code, ref byte[] codeBytes)
         {
-            BarcodeType barcodeType = BarcodeTypeMapper.ToBarcodeType(code.Format!);
+            if (string.IsNullOrWhiteSpace(code?.Value))
+                return;
+
+            BarcodeType barcodeType = code.Format switch
+            {
+                "Code128" => BarcodeType.Code128,
+                "Code39" => BarcodeType.Code39,
+                "Code93" => BarcodeType.Code93,
+                "CodaBar" => BarcodeType.Codabar,
+                "Ean13" => BarcodeType.Ean13,
+                "Ean8" => BarcodeType.Ean8,
+                "Itf" => BarcodeType.Interleaved2Of5,
+                "Upca" => BarcodeType.UpcA,
+                "Upce" => BarcodeType.UpcE,
+                "I2OF5" => BarcodeType.Industrial2Of5,
+                _ => BarcodeType.Unspecified
+            };
 
             try
             {
-                if (barcodeType == BarcodeType.Unspecified)
-                {
-                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(code.Value, QRCodeGenerator.ECCLevel.L);
-                    PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
-
-                    codeBytes = qrCode.GetGraphic(20);
-                }
-                else
-                {
-                    Barcode barcode = new Barcode();
-                    barcode.IncludeLabel = true;
-                    SKImage barcodeImage;
-                    int width = Math.Max(300, code.Value!.Length * 16);
-                    int height = Math.Max(200, Math.Min(500, code.Value.Length * 8));
-                    barcodeImage = barcode.Encode(barcodeType, code.Value, width, height);
-
-                    codeBytes = barcodeImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
-                }
+                codeBytes = barcodeType == BarcodeType.Unspecified
+                    ? GenerateQrCodeBytes(code.Value)
+                    : GenerateBarcodeBytes(barcodeType, code.Value);
             }
             catch
             {
                 return;
             }
-        }
 
-        /// <summary>
-        /// Toggles code favorite property
-        /// </summary>
-        public async Task<CodeModel?> ToggleCodeFavoriteAsync(string id, CodeModel updatedCode) =>
-            await localStorageService.UpdateCodeAsync(id, updatedCode);
+            static byte[] GenerateQrCodeBytes(string value)
+            {
+                QRCodeGenerator qrGenerator = new();
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(value, QRCodeGenerator.ECCLevel.L);
+                PngByteQRCode qrCode = new(qrCodeData);
+                return qrCode.GetGraphic(20);
+            }
+
+            static byte[] GenerateBarcodeBytes(BarcodeType barcodeType, string value)
+            {
+                Barcode barcode = new() { IncludeLabel = true };
+                int width = Math.Max(300, value.Length * 16);
+                int height = Math.Max(200, Math.Min(500, value.Length * 8));
+                SKImage barcodeImage = barcode.Encode(barcodeType, value, width, height);
+                return barcodeImage.Encode(SKEncodedImageFormat.Png, 100).ToArray();
+            }
+        }
 
         /// <summary>
         /// Saves code image to the gallery and displays toast notification

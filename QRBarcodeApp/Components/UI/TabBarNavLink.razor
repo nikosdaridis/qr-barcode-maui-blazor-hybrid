@@ -1,21 +1,24 @@
-﻿@inject NavigationManager NavigationManager
-@inject LocalStorageService LocalStorageService
-
-@if (TabName == "scan")
+﻿@if (TabName == "scan")
 {
-    <div class="tab-bar-nav-link flex flex-1 items-center justify-center" @onclick="ShowCameraScannerPopupAsync">
+    <div class="tab-bar-nav-link flex flex-1 items-center justify-center" @onclick=ShowCameraScannerPopupAsync>
         <img class="h-[30px] w-[30px]" src="icons/scan.svg" />
     </div>
 }
 else
 {
-    <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href="@($"/{TabName}")">
-        <img class="@(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? "" : "active") h-[30px] w-[30px] transition duration-300 ease-in-out"
-             src="@($"icons/{TabName}{(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? "" : "-active")}.svg")" />
+    <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href=@($"/{TabName}")>
+        <img class="@(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? string.Empty : "active") h-[30px] w-[30px] transition duration-300 ease-in-out"
+             src=@($"icons/{TabName}{(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? string.Empty : "-active")}.svg") />
     </NavLink>
 }
 
 @code {
+    [Parameter]
+    public NavigationManager? NavigationManager { get; set; }
+
+    [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
     [Parameter]
     public string? TabName { get; set; }
 
@@ -29,7 +32,7 @@ else
     {
         await base.SetParametersAsync(parameters);
 
-        _activeTab = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/').FirstOrDefault();
+        _activeTab = NavigationManager?.ToBaseRelativePath(NavigationManager.Uri).Split('/').FirstOrDefault();
     }
 
     /// <summary>
@@ -37,7 +40,7 @@ else
     /// </summary>
     private async Task ShowCameraScannerPopupAsync()
     {
-        if (_isPopupShown)
+        if (_isPopupShown || NavigationManager is null || LocalStorageService is null)
             return;
 
         _isPopupShown = true;

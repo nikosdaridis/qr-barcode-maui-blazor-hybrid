@@ -8,9 +8,7 @@ namespace QRBarcodeApp.Models.QR
         [Required(ErrorMessage = "Text is required")]
         public string? Text { get; set; }
 
-        public string GetValue()
-        {
-            return Text ?? "";
-        }
+        public string GetValue() =>
+            Text ?? string.Empty;
     }
 }
