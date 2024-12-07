@@ -398,5 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Compiled JavaScript and Tailwind
-QRBarcodeApp/wwwroot/**/*.js
-QRBarcodeApp/wwwroot/tailwind-app.css
+QRBarcodeMauiBlazorHybrid/wwwroot/**/*.js
+QRBarcodeMauiBlazorHybrid/wwwroot/tailwind-app.css
