@@ -1,4 +1,5 @@
-﻿using QRBarcodeMauiBlazorHybrid.Interfaces;
+﻿using QRBarcodeMauiBlazorHybrid.Common.Attributes;
+using QRBarcodeMauiBlazorHybrid.Common.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace QRBarcodeMauiBlazorHybrid.Models.Barcode
@@ -7,6 +8,7 @@ namespace QRBarcodeMauiBlazorHybrid.Models.Barcode
     {
         [Required(ErrorMessage = "I2OF5 is required")]
         [RegularExpression(@"^\d+$", ErrorMessage = "I2OF5 must contain digits only")]
+        [InputType(InputType.Number)]
         public string? I2OF5 { get; set; }
 
         public string GetValue() =>

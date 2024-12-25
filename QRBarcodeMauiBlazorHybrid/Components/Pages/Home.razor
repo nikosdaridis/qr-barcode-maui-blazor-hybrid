@@ -16,7 +16,7 @@
         if (string.IsNullOrWhiteSpace(activeTab))
         {
             NavigationManager.NavigateTo("/history");
-            App.Current!.MainPage!.ShowPopup(new CameraScanner(NavigationManager, LocalStorageService));
+            Application.Current!.Windows[0].Page!.ShowPopup(new CameraScanner(NavigationManager, LocalStorageService));
         }
         else
             NavigationManager.NavigateTo(activeTab);

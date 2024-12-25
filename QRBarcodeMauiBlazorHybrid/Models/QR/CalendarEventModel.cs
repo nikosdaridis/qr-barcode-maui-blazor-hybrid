@@ -1,4 +1,5 @@
-﻿using QRBarcodeMauiBlazorHybrid.Interfaces;
+﻿using QRBarcodeMauiBlazorHybrid.Common.Attributes;
+using QRBarcodeMauiBlazorHybrid.Common.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -7,16 +8,21 @@ namespace QRBarcodeMauiBlazorHybrid.Models.QR
     public class CalendarEventModel : IGenerateModel
     {
         [Required(ErrorMessage = "Summary is required")]
+        [InputType(InputType.Text)]
         public string? Summary { get; set; }
 
         [Required(ErrorMessage = "Start is required")]
+        [InputType(InputType.DateTime)]
         public DateTime Start { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "End is required")]
+        [InputType(InputType.DateTime)]
         public DateTime End { get; set; } = DateTime.Now;
 
+        [InputType(InputType.Text)]
         public string? Location { get; set; }
 
+        [InputType(InputType.Text)]
         public string? Description { get; set; }
 
         public string GetValue()

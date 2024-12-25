@@ -1,4 +1,5 @@
-﻿using QRBarcodeMauiBlazorHybrid.Interfaces;
+﻿using QRBarcodeMauiBlazorHybrid.Common.Attributes;
+using QRBarcodeMauiBlazorHybrid.Common.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace QRBarcodeMauiBlazorHybrid.Models.Barcode
@@ -7,6 +8,7 @@ namespace QRBarcodeMauiBlazorHybrid.Models.Barcode
     {
         [Required(ErrorMessage = "Itf is required")]
         [RegularExpression(@"^(\d{2})+$", ErrorMessage = "Itf must contain an even number of digits")]
+        [InputType(InputType.Number)]
         public string? Itf { get; set; }
 
         public string GetValue() =>

@@ -1,4 +1,5 @@
-﻿using QRBarcodeMauiBlazorHybrid.Interfaces;
+﻿using QRBarcodeMauiBlazorHybrid.Common.Attributes;
+using QRBarcodeMauiBlazorHybrid.Common.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -7,21 +8,28 @@ namespace QRBarcodeMauiBlazorHybrid.Models.QR
     public class ContactInfoModel : IGenerateModel
     {
         [Required(ErrorMessage = "Name is required")]
+        [InputType(InputType.Text)]
         public string? Name { get; set; }
 
+        [InputType(InputType.Text)]
         public string? Company { get; set; }
 
+        [InputType(InputType.Text)]
         public string? Title { get; set; }
 
+        [InputType(InputType.Text)]
         public string? Address { get; set; }
 
         [RegularExpression("^\\d+$", ErrorMessage = "Invalid Phone")]
+        [InputType(InputType.Number)]
         public ulong? Phone { get; set; }
 
         [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Invalid Email")]
+        [InputType(InputType.Text)]
         public string? Email { get; set; }
 
         [RegularExpression(@"^(?i)(?:(?:http|https):\/\/|www\.)?[\w-]+(?:\.[\w-]+)+", ErrorMessage = "Invalid Website")]
+        [InputType(InputType.Text)]
         public string? Website { get; set; }
 
         public string GetValue()

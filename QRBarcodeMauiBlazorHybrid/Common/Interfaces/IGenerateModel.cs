@@ -1,4 +1,4 @@
-﻿namespace QRBarcodeMauiBlazorHybrid.Interfaces
+﻿namespace QRBarcodeMauiBlazorHybrid.Common.Interfaces
 {
     public interface IGenerateModel
     {

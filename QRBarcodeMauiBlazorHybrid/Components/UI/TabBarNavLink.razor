@@ -47,7 +47,7 @@ else
 
         try
         {
-            await App.Current!.MainPage!.ShowPopupAsync(new CameraScanner(NavigationManager, LocalStorageService));
+            await Application.Current!.Windows[0].Page!.ShowPopupAsync(new CameraScanner(NavigationManager, LocalStorageService));
         }
         finally
         {

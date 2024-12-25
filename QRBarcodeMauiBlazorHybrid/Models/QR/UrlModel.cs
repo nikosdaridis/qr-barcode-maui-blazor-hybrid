@@ -1,4 +1,5 @@
-﻿using QRBarcodeMauiBlazorHybrid.Interfaces;
+﻿using QRBarcodeMauiBlazorHybrid.Common.Attributes;
+using QRBarcodeMauiBlazorHybrid.Common.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace QRBarcodeMauiBlazorHybrid.Models.QR
@@ -7,6 +8,7 @@ namespace QRBarcodeMauiBlazorHybrid.Models.QR
     {
         [Required(ErrorMessage = "Url is required")]
         [RegularExpression(@"^(?i)(?:(?:http|https):\/\/|www\.)?[\w-]+(?:\.[\w-]+)+", ErrorMessage = "Invalid Url")]
+        [InputType(InputType.Text)]
         public string? Url { get; set; }
 
         public string GetValue() =>

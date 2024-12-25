@@ -17,23 +17,28 @@
             @foreach (PropertyInfo property in _model.GetType().GetProperties())
             {
                 <label class="my-2" for=@property.Name>@property.Name</label>
-                if (_model is WiFiModel && property.Name == "EncryptionType")
+
+                string[]? dropdownOptions = property.GetCustomAttribute<DropdownOptionsAttribute>()?.Options;
+                if (dropdownOptions is not null)
                 {
                     <select class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                             @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value))>
-                        <option value="WPA/WPA2">WPA/WPA2</option>
-                        <option value="WEP">WEP</option>
+                        @foreach (string option in dropdownOptions)
+                        {
+                            <option value=@option>@option</option>
+                        }
                     </select>
                 }
                 else
                 {
+                    string? inputType = property.GetCustomAttribute<InputTypeAttribute>()?.Type;
                     object? propertyValue = property.GetValue(_model);
 
                     if (property.PropertyType == typeof(DateTime) && propertyValue is not null)
                         propertyValue = ((DateTime)propertyValue).ToString("yyyy-MM-ddTHH:mm");
 
                     <input class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-                           type=@GetInputType(property)
+                           type=@inputType
                            value=@propertyValue
                            step=@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")
                            @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value)) />
@@ -102,35 +107,6 @@
             "Sms" => new SmsModel(),
             _ => new TextModel()
         };
-    }
-
-    /// <summary>
-    /// Retrieves input type for property based on property name or property type
-    /// </summary>
-    private string GetInputType(PropertyInfo property)
-    {
-        string inputType = string.Empty;
-
-        inputType = property.Name switch
-        {
-            "Ean13" or "Ean8" or "Itf" or "Upca" or "Upce" or "I2OF5" => "number",
-            _ => string.Empty
-        };
-
-        if (!string.IsNullOrWhiteSpace(inputType))
-            return inputType;
-
-        System.Type type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-
-        inputType = type.Name switch
-        {
-            "String" => "text",
-            "UInt64" or "Double" => "number",
-            "DateTime" => "datetime-local",
-            _ => "text"
-        };
-
-        return inputType;
     }
 
     /// <summary>
