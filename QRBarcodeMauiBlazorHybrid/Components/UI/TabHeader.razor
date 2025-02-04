@@ -1,8 +1,8 @@
-﻿<div class="tab-header fixed top-0 z-50 grid w-screen justify-center bg-[--primary-color] p-3 text-[--text-color]">
+﻿<div class="tab-header fixed top-0 z-50 grid w-screen justify-center bg-primary p-3 text-text">
     <h1 class="text-4xl font-bold">@Name</h1>
     @if (HandleInput.HasDelegate)
     {
-        <input class="border-input focus-visible:ring-ring mt-4 w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+        <input class="border-input focus-visible:ring-ring mt-4 w-[90vw] rounded-xl border bg-primary p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                placeholder=@InputPlaceholder
                @oninput=HandleInput />
     }

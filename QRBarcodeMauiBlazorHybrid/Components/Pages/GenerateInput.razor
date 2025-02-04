@@ -21,7 +21,7 @@
                 string[]? dropdownOptions = property.GetCustomAttribute<DropdownOptionsAttribute>()?.Options;
                 if (dropdownOptions is not null)
                 {
-                    <select class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    <select class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-primary p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                             @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value))>
                         @foreach (string option in dropdownOptions)
                         {
@@ -37,14 +37,14 @@
                     if (property.PropertyType == typeof(DateTime) && propertyValue is not null)
                         propertyValue = ((DateTime)propertyValue).ToString("yyyy-MM-ddTHH:mm");
 
-                    <input class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-[--primary-color] p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    <input class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-primary p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                            type=@inputType
                            value=@propertyValue
                            step=@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")
                            @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value)) />
                 }
             }
-            <button class="mt-4 rounded-xl bg-[--primary-color] p-3 text-2xl" type="submit" @ref=_generateButton
+            <button class="mt-4 rounded-xl bg-primary p-3 text-2xl" type="submit" @ref=_generateButton
                     @onclick=@(async () => await JSRuntime.InvokeVoidAsync("playButtonAnimation", _generateButton))>
                 Generate
             </button>

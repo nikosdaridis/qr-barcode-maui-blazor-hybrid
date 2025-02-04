@@ -1,7 +1,7 @@
 ﻿@if (!string.IsNullOrWhiteSpace(IconPath))
 {
     <div>
-        <button class="@GetButtonClass() rounded-full bg-[--primary-color] p-3"
+        <button class="@GetButtonClass() rounded-full bg-primary p-3"
                 @ref=_button @onclick=HandleOnClickAsync>
             <img class=@IconCSS src=@IconPath />
         </button>
