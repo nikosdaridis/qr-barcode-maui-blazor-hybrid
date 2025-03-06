@@ -14,6 +14,6 @@
     "uglify-js": "^3.19.3",
     "cross-env": "^7.0.3",
     "tailwindcss": "^4.0.8",
-    "@tailwindcss/cli": "^4.0.9"
+    "@tailwindcss/cli": "^4.0.10"
   }
 }
