@@ -399,4 +399,4 @@ FodyWeavers.xsd
 
 # Compiled JavaScript and Tailwind
 QRBarcodeMauiBlazorHybrid/wwwroot/**/*.js
-QRBarcodeMauiBlazorHybrid/wwwroot/tailwind-app.css
+QRBarcodeMauiBlazorHybrid/wwwroot/appTailwind.css

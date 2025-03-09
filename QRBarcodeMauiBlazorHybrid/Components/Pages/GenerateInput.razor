@@ -8,7 +8,7 @@
 
 <TabHeader Name=@($"Generate {Format}") />
 
-<div class="main-content grid w-[90vw] gap-2">
+<div class="main-content grid w-[90vw]">
     @if (_model is not null)
     {
         <EditForm Model=@_model OnValidSubmit=HandleSubmitAsync>
@@ -16,12 +16,12 @@
             <ValidationSummary />
             @foreach (PropertyInfo property in _model.GetType().GetProperties())
             {
-                <label class="my-2" for=@property.Name>@property.Name</label>
+                <label class="my-2 block" for=@property.Name>@property.Name</label>
 
                 string[]? dropdownOptions = property.GetCustomAttribute<DropdownOptionsAttribute>()?.Options;
                 if (dropdownOptions is not null)
                 {
-                    <select class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-primary p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    <select class="border-input placeholder-gray-400 w-[90vw] rounded-xl border bg-primary p-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                             @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value))>
                         @foreach (string option in dropdownOptions)
                         {
@@ -37,7 +37,7 @@
                     if (property.PropertyType == typeof(DateTime) && propertyValue is not null)
                         propertyValue = ((DateTime)propertyValue).ToString("yyyy-MM-ddTHH:mm");
 
-                    <input class="border-input focus-visible:ring-ring w-[90vw] rounded-xl border bg-primary p-2 placeholder-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    <input class="border-input placeholder-gray-400 w-[90vw] rounded-xl border bg-primary p-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                            type=@inputType
                            value=@propertyValue
                            step=@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")

@@ -18,19 +18,19 @@
         x:Name="Scanner"/>
 
         <Grid ColumnDefinitions="*, *" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,1,1,0.2">
-            <Frame Grid.Column="0" WidthRequest="60" HeightRequest="60" CornerRadius="30" BackgroundColor="LightGray" HorizontalOptions="Center" VerticalOptions="Center">
-                <Frame.GestureRecognizers>
+            <Border Grid.Column="0" WidthRequest="60" HeightRequest="60" StrokeShape="RoundRectangle 30" BackgroundColor="LightGray" HorizontalOptions="Center" VerticalOptions="Center">
+                <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="HandleFrameCameraClick" />
-                </Frame.GestureRecognizers>
+                </Border.GestureRecognizers>
                 <ImageButton x:Name="CameraButton" Source="rotate.svg" WidthRequest="40" HeightRequest="40" Clicked="HandleCameraClick" />
-            </Frame>
+            </Border>
 
-            <Frame Grid.Column="1" WidthRequest="60" HeightRequest="60" CornerRadius="30" BackgroundColor="LightGray" HorizontalOptions="Center" VerticalOptions="Center">
-                <Frame.GestureRecognizers>
+            <Border Grid.Column="1" WidthRequest="60" HeightRequest="60" StrokeShape="RoundRectangle 30" BackgroundColor="LightGray" HorizontalOptions="Center" VerticalOptions="Center">
+                <Border.GestureRecognizers>
                     <TapGestureRecognizer Tapped="HandleFrameTorchClick" />
-                </Frame.GestureRecognizers>
+                </Border.GestureRecognizers>
                 <ImageButton x:Name="TorchButton" Source="flash.svg" WidthRequest="40" HeightRequest="40" Clicked="HandleTorchClick" />
-            </Frame>
+            </Border>
         </Grid>
     </AbsoluteLayout>
 

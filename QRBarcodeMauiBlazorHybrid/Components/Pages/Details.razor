@@ -45,7 +45,7 @@
 
         <div class="mt-2 flex items-center justify-center gap-4 text-center">
             <img class="copy-to-clipboard-button h-[25px] w-[25px]" src="icons/copy.svg" @onclick=@(async () => await CopyToClipboard()) @ref=_copyToClipboardButton />
-            <h2 class="max-w-[80vw] break-words text-xl font-bold">@_code.Value</h2>
+            <h2 class="max-w-[80vw] text-xl font-bold break-words">@_code.Value</h2>
         </div>
     }
 </div>

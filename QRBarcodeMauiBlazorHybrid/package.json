@@ -4,16 +4,16 @@
     "typescript-build": "tsc",
     "typescript-watch": "tsc --watch",
     "typescript-release": "tsc && uglifyjs ./wwwroot/app.js -o ./wwwroot/app.js -c -m",
-    "tailwind-build": "cross-env NODE_ENV=development npx @tailwindcss/cli -i ./wwwroot/app.css -o ./wwwroot/tailwind-app.css",
-    "tailwind-watch": "cross-env NODE_ENV=development npx @tailwindcss/cli -i ./wwwroot/app.css -o ./wwwroot/tailwind-app.css --watch",
-    "tailwind-release": "cross-env NODE_ENV=production npx @tailwindcss/cli -i ./wwwroot/app.css -o ./wwwroot/tailwind-app.css --minify"
+    "tailwind-build": "cross-env NODE_ENV=development npx @tailwindcss/cli -i ./wwwroot/app.css -o ./wwwroot/appTailwind.css",
+    "tailwind-watch": "cross-env NODE_ENV=development npx @tailwindcss/cli -i ./wwwroot/app.css -o ./wwwroot/appTailwind.css --watch",
+    "tailwind-release": "cross-env NODE_ENV=production npx @tailwindcss/cli -i ./wwwroot/app.css -o ./wwwroot/appTailwind.css --minify"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.0.12",
     "concurrently": "^9.1.2",
-    "typescript": "^5.8.2",
-    "uglify-js": "^3.19.3",
     "cross-env": "^7.0.3",
     "tailwindcss": "^4.0.11",
-    "@tailwindcss/cli": "^4.0.11"
+    "typescript": "^5.8.2",
+    "uglify-js": "^3.19.3"
   }
 }
