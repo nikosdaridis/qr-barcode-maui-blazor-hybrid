@@ -31,7 +31,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BarcodeLib" Version="3.1.4" />
+		<PackageReference Include="BarcodeLib" Version="3.1.5" />
 		<PackageReference Include="BarcodeScanning.Native.Maui" Version="2.1.7" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />
