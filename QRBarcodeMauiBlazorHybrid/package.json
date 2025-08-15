@@ -12,7 +12,7 @@
     "@tailwindcss/cli": "^4.1.11",
     "concurrently": "^9.2.0",
     "cross-env": "^10.0.0",
-    "tailwindcss": "^4.1.11",
+    "tailwindcss": "^4.1.12",
     "typescript": "^5.9.2",
     "uglify-js": "^3.19.3"
   }
