@@ -19,11 +19,19 @@ public static class MauiProgram
             })
             .UseMauiCommunityToolkit(options =>
             {
-                options.SetPopupOptionsDefaults(new DefaultPopupOptionsSettings
+                options.SetPopupOptionsDefaults(new()
                 {
                     Shape = null,
                     Shadow = null,
                     PageOverlayColor = Colors.Transparent,
+                });
+
+                options.SetPopupDefaults(new()
+                {
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
+                    Margin = new(0),
+                    Padding = new(0),
                 });
             })
             .UseBarcodeScanning();
