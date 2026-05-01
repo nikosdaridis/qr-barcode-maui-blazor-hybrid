@@ -1,13 +1,13 @@
-﻿@if (TabName == "scan")
+@if (TabName == RoutePaths.SCAN_TAB)
 {
     <div class="tab-bar-nav-link flex flex-1 items-center justify-center" @onclick=ShowCameraScannerPopupAsync>
-        <img class="h-[30px] w-[30px]" src="icons/scan.svg" />
+        <img class="size-icon-xl" src="icons/scan.svg" />
     </div>
 }
 else
 {
     <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href=@($"/{TabName}")>
-        <img class="@(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? string.Empty : "active") h-[30px] w-[30px] transition duration-300 ease-in-out"
+        <img class="@(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? string.Empty : "active") size-icon-xl transition duration-300 ease-in-out"
              src=@($"icons/{TabName}{(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? string.Empty : "-active")}.svg") />
     </NavLink>
 }
@@ -26,7 +26,7 @@ else
     private bool _isPopupShown;
 
     /// <summary>
-    /// Sets component parameters and active tab from URL
+    /// Sets component parameters and active tab from URL.
     /// </summary>
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -36,12 +36,14 @@ else
     }
 
     /// <summary>
-    /// Displays camera scanner popup
+    /// Displays camera scanner popup.
     /// </summary>
     private async Task ShowCameraScannerPopupAsync()
     {
         if (_isPopupShown || NavigationManager is null || LocalStorageService is null)
+        {
             return;
+        }
 
         _isPopupShown = true;
 

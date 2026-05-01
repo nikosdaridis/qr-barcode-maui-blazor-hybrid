@@ -1,21 +1,20 @@
-﻿namespace QRBarcodeMauiBlazorHybrid.Common.Attributes
-{
-    public enum InputType
-    {
-        Text,
-        Number,
-        DateTime
-    }
+namespace QRBarcodeMauiBlazorHybrid.Common.Attributes;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class InputTypeAttribute(InputType type) : Attribute
+public enum InputType
+{
+    Text,
+    Number,
+    DateTime
+}
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class InputTypeAttribute(InputType type) : Attribute
+{
+    public string Type { get; } = type switch
     {
-        public string Type { get; } = type switch
-        {
-            InputType.Text => "text",
-            InputType.Number => "number",
-            InputType.DateTime => "datetime-local",
-            _ => "text"
-        };
-    }
+        InputType.Text => "text",
+        InputType.Number => "number",
+        InputType.DateTime => "datetime-local",
+        _ => throw new ArgumentOutOfRangeException(nameof(type), $"Not expected input type value: {type}")
+    };
 }

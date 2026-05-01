@@ -1,4 +1,4 @@
-﻿@if (!string.IsNullOrWhiteSpace(IconPath))
+@if (!string.IsNullOrWhiteSpace(IconPath))
 {
     <div>
         <button class="@GetButtonClass() rounded-full bg-primary p-4"
@@ -20,7 +20,7 @@
     public string? IconPath { get; set; }
 
     [Parameter]
-    public string? IconCSS { get; set; } = "h-[30px] w-[30px]";
+    public string? IconCSS { get; set; } = "size-icon-xl";
 
     [Parameter]
     public MarkupString? Text { get; set; }
@@ -31,7 +31,7 @@
     private ElementReference _button;
 
     /// <summary>
-    /// Retrieves button CSS class based on icon file path
+    /// Retrieves button CSS class based on icon file path.
     /// </summary>
     private string GetButtonClass()
     {
@@ -47,14 +47,18 @@
     }
 
     /// <summary>
-    /// Plays button animation and invokes callback
+    /// Plays button animation and invokes callback.
     /// </summary>
     private async Task HandleOnClickAsync(MouseEventArgs args)
     {
         if (JSRuntime is not null)
+        {
             await JSRuntime.InvokeVoidAsync("playButtonAnimation", _button);
+        }
 
         if (HandleClick.HasDelegate)
+        {
             await HandleClick.InvokeAsync(args);
+        }
     }
 }

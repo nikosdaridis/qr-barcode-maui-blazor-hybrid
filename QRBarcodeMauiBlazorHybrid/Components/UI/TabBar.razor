@@ -1,8 +1,8 @@
 ﻿@inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
 
-<nav class="tab-bar fixed bottom-0 z-50 flex h-[50px] w-screen justify-between bg-primary">
-    @foreach (string tabName in new[] { "scan", "generate", "favorites", "history" })
+<nav class="tab-bar fixed bottom-0 z-50 flex h-tab-bar w-screen justify-between bg-primary">
+    @foreach (string tabName in RoutePaths.TabBarOrder)
     {
         <TabBarNavLink NavigationManager=@NavigationManager LocalStorageService=@LocalStorageService TabName=@tabName />
     }

@@ -1,10 +1,9 @@
-﻿using Foundation;
+using Foundation;
 
-namespace QRBarcodeMauiBlazorHybrid
+namespace QRBarcodeMauiBlazorHybrid;
+
+[Register("AppDelegate")]
+public sealed class AppDelegate : MauiUIApplicationDelegate
 {
-    [Register("AppDelegate")]
-    public class AppDelegate : MauiUIApplicationDelegate
-    {
-        protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
-    }
+    protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 }

@@ -1,8 +1,7 @@
-﻿namespace QRBarcodeMauiBlazorHybrid.Common.Attributes
+namespace QRBarcodeMauiBlazorHybrid.Common.Attributes;
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class DropdownOptionsAttribute(params string[] options) : Attribute
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class DropdownOptionsAttribute(params string[] options) : Attribute
-    {
-        public string[] Options { get; } = options;
-    }
+    public string[] Options { get; } = options;
 }

@@ -1,4 +1,4 @@
-﻿@page "/history"
+@page "/history"
 
 @inherits CodesBase
 
@@ -8,12 +8,12 @@
 
 @code {
     /// <summary>
-    /// Loads all codes and set active tab
+    /// Loads all codes and set active tab.
     /// </summary>
-    protected override async Task LoadComponentDataAsync(LocalStorageService LocalStorageService)
+    protected override async Task LoadComponentDataAsync(LocalStorageService localStorageService)
     {
-        tabName = "History";
-        await LocalStorageService.SaveActiveTabAsync("/history");
-        codes = await LocalStorageService.GetCodesAsync();
+        tabName = RoutePaths.HISTORY_LABEL;
+        await localStorageService.SaveActiveTabAsync(RoutePaths.HISTORY);
+        codes = await localStorageService.GetCodesAsync();
     }
 }

@@ -1,29 +1,29 @@
-﻿@inherits PageBase
+@inherits PageBase
 
 @page "/generate"
 
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
 
-<TabHeader Name="Generate" />
+<TabHeader Name=@RoutePaths.GENERATE_LABEL />
 
-<div class="main-content grid w-[90vw] gap-2">
+<div class="main-content grid w-content gap-2">
     <h1 class="text-2xl font-semibold">QR</h1>
 
-    @foreach (string type in new[] { "Text", "Url", "Email", "WiFi", "GeographicCoordinates", "ContactInfo", "CalendarEvent", "Phone", "Sms" })
+    @foreach (QrFormatInfo qrFormat in QrFormats.All)
     {
-        <GenerateRectangle IconPath=@($"icons/generate/{type.ToLower()}.svg")
-                           Text=@(type != "WiFi" ? Regex.Replace(type, "(\\B[A-Z])", " $1") : type)
-                           HandleClick=@(() => NavigationManager.NavigateTo($"/generate/{type}/QRCode")) />
+        <GenerateRectangle IconPath=@($"icons/generate/{qrFormat.Type.ToLowerInvariant()}.svg")
+                           Text=@qrFormat.DisplayName
+                           HandleClick=@(() => NavigationManager.NavigateTo($"{RoutePaths.GENERATE}/{qrFormat.Type}/{QrFormats.QR_CODE_FORMAT}")) />
     }
 
     <h1 class="mt-4 text-2xl font-semibold">Barcode</h1>
 
-    @foreach (string format in new[] { "Code128", "Code39", "Code93", "CodaBar", "Ean13", "Ean8", "Itf", "Upca", "Upce", "I2OF5" })
+    @foreach (BarcodeFormatInfo barcodeFormat in BarcodeFormats.All)
     {
         <GenerateRectangle IconPath="icons/generate/barcode.svg"
-                           Text=@format
-                           HandleClick=@(() => NavigationManager.NavigateTo($"/generate/{GetBarcodeType(format)}/{format}")) />
+                           Text=@barcodeFormat.Format
+                           HandleClick=@(() => NavigationManager.NavigateTo($"{RoutePaths.GENERATE}/{barcodeFormat.Type}/{barcodeFormat.Format}")) />
     }
 </div>
 
@@ -31,19 +31,8 @@
 
 @code {
     /// <summary>
-    /// Saves active tab
+    /// Saves active tab.
     /// </summary>
     protected override async Task OnInitializedAsync() =>
-        await LocalStorageService.SaveActiveTabAsync("/generate");
-
-    /// <summary>
-    /// Retrieves Barcode type based on format
-    /// </summary>
-    private string GetBarcodeType(string format) =>
-        format switch
-        {
-            "Code128" or "Code39" or "Code93" or "CodaBar" or "Itf" or "I2OF5" => "Text",
-            "Ean13" or "Ean8" or "Upca" or "Upce" => "Product",
-            _ => "Text"
-        };
+        await LocalStorageService.SaveActiveTabAsync(RoutePaths.GENERATE);
 }

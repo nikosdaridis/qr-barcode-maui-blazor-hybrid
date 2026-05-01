@@ -12,13 +12,13 @@ function adjustContentMargin(offset = 10): void {
 }
 
 // Plays button animation
-function playButtonAnimation(arg: HTMLElement | MouseEvent, duration = 250): void {
+function playButtonAnimation(eventOrElement: HTMLElement | MouseEvent, duration = 250): void {
     let element: HTMLElement;
 
-    if (arg instanceof MouseEvent)
-        element = arg.target as HTMLElement;
-    else if (arg instanceof HTMLElement)
-        element = arg;
+    if (eventOrElement instanceof MouseEvent)
+        element = eventOrElement.target as HTMLElement;
+    else if (eventOrElement instanceof HTMLElement)
+        element = eventOrElement;
     else
         return;
 

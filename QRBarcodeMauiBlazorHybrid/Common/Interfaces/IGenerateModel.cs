@@ -1,10 +1,9 @@
-﻿namespace QRBarcodeMauiBlazorHybrid.Common.Interfaces
+namespace QRBarcodeMauiBlazorHybrid.Common.Interfaces;
+
+public interface IGenerateModel
 {
-    public interface IGenerateModel
-    {
-        /// <summary>
-        /// Gets encoded string value
-        /// </summary>
-        public string GetValue();
-    }
+    /// <summary>
+    /// Gets encoded string value.
+    /// </summary>
+    public string GetValue();
 }

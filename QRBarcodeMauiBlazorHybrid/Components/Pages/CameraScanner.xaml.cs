@@ -1,6 +1,7 @@
 using BarcodeScanning;
 using CommunityToolkit.Maui.Views;
 using Microsoft.AspNetCore.Components;
+using QRBarcodeMauiBlazorHybrid.Common;
 using QRBarcodeMauiBlazorHybrid.Services;
 
 namespace QRBarcodeMauiBlazorHybrid.Components.Pages;
@@ -12,7 +13,7 @@ public sealed partial class CameraScanner : Popup
     private bool _scanned;
 
     /// <summary>
-    /// Sets up camera scanner popup, asks for camera permissions and enables camera
+    /// Sets up camera scanner popup, asks for camera permissions and enables camera.
     /// </summary>
     public CameraScanner(NavigationManager navigationManager, LocalStorageService localStorageService)
     {
@@ -25,39 +26,43 @@ public sealed partial class CameraScanner : Popup
     }
 
     /// <summary>
-    /// Handles QR and Barcode detection, saves scanned code and navigates to details tab
+    /// Handles QR and Barcode detection, saves scanned code and navigates to details tab.
     /// </summary>
     private async void CameraViewOnDetectionFinished(object sender, OnDetectionFinishedEventArg e)
     {
         if (e?.BarcodeResults?.FirstOrDefault() is null || _scanned)
+        {
             return;
+        }
 
         _scanned = true;
         await CloseAsync();
 
-        string id = await _localStorageService.SaveCodeAsync(e.BarcodeResults.First(), "Scanned");
+        string id = await _localStorageService.SaveCodeAsync(e.BarcodeResults.First(), CodeSource.SCANNED);
         _navigationManager.NavigateTo($"/details/{id}");
     }
 
     /// <summary>
-    /// Invokes camera click handler
+    /// Invokes camera click handler.
     /// </summary>
     private void HandleFrameCameraClick(object sender, EventArgs e) =>
         HandleCameraClick(CameraButton, e);
 
     /// <summary>
-    /// Invokes torch click handler 
+    /// Invokes torch click handler.
     /// </summary>
     private void HandleFrameTorchClick(object sender, EventArgs e) =>
         HandleTorchClick(TorchButton, e);
 
     /// <summary>
-    /// Toggles camera facing direction
+    /// Toggles camera facing direction.
     /// </summary>
     private void HandleCameraClick(object sender, EventArgs e)
     {
         if (CameraButton is null)
+        {
             return;
+        }
 
         ToggleImageSource(CameraButton, "rotate.svg", "rotate_active.svg");
 
@@ -72,16 +77,20 @@ public sealed partial class CameraScanner : Popup
             }
         }
         else
+        {
             Scanner.CameraFacing = CameraFacing.Back;
+        }
     }
 
     /// <summary>
-    /// Toggles flashlight if not front camera
+    /// Toggles flashlight if not front camera.
     /// </summary>
     private void HandleTorchClick(object sender, EventArgs e)
     {
         if (TorchButton is null || Scanner.CameraFacing == CameraFacing.Front)
+        {
             return;
+        }
 
         ToggleImageSource(TorchButton, "flash.svg", "flash_active.svg");
 
@@ -89,12 +98,14 @@ public sealed partial class CameraScanner : Popup
     }
 
     /// <summary>
-    /// Toggles button source image between default and active state
+    /// Toggles button source image between default and active state.
     /// </summary>
     private static void ToggleImageSource(ImageButton button, string defaultImage, string activeImage)
     {
         if (string.IsNullOrWhiteSpace(button?.Source?.ToString()))
+        {
             return;
+        }
 
         button.Source = button.Source.ToString()!.EndsWith(defaultImage) ? activeImage : defaultImage;
     }

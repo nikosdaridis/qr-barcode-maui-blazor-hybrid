@@ -1,4 +1,4 @@
-﻿@page "/favorites"
+@page "/favorites"
 
 @inherits CodesBase
 
@@ -8,12 +8,12 @@
 
 @code {
     /// <summary>
-    /// Loads favorite codes and set active tab
+    /// Loads favorite codes and set active tab.
     /// </summary>
-    protected override async Task LoadComponentDataAsync(LocalStorageService LocalStorageService)
+    protected override async Task LoadComponentDataAsync(LocalStorageService localStorageService)
     {
-        tabName = "Favorites";
-        await LocalStorageService.SaveActiveTabAsync("/favorites");
-        codes = (await LocalStorageService.GetCodesAsync()).Where(code => code.Value.Favorite is true).ToDictionary<string, CodeModel>();
+        tabName = RoutePaths.FAVORITES_LABEL;
+        await localStorageService.SaveActiveTabAsync(RoutePaths.FAVORITES);
+        codes = (await localStorageService.GetCodesAsync()).Where(code => code.Value.Favorite is true).ToDictionary<string, CodeModel>();
     }
 }

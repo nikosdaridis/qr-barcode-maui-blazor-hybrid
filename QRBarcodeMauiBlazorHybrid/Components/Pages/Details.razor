@@ -1,4 +1,4 @@
-﻿@inherits PageBase
+@inherits PageBase
 
 @page "/details/{Id}"
 
@@ -9,23 +9,23 @@
 
 <TabHeader Name=@($"{_code?.Source} {_code?.Format}") />
 
-<div class="main-content flex w-[90vw] flex-col items-center gap-4">
+<div class="main-content flex w-content flex-col items-center gap-4">
     @if (_code is not null)
     {
         <h2 class="text-2xl font-semibold text-highlight">@_codeType</h2>
 
         if (!string.IsNullOrWhiteSpace(_imageBase64))
         {
-            <img class="w-[70vw] rounded-lg" src=@_imageBase64 />
+            <img class="w-image-preview rounded-lg" src=@_imageBase64 />
         }
 
-        <div class="flex w-[90vw] items-center justify-center gap-4">
+        <div class="flex w-content items-center justify-center gap-4">
             <RoundButton JSRuntime=@JSRuntime
                          IconPath=@($"icons/favorites{(_code.Favorite ?? false ? "-active" : string.Empty)}.svg")
                          Text=@((MarkupString)$"{(_code.Favorite ?? false ? "Added" : "Add")} to<br />Favorites")
                          HandleClick=@(async () => await ToggleFavoriteAsync()) />
 
-            @if (_codeBytes.Length != 0)
+            @if (_codeBytes.Length > 0)
             {
                 <RoundButton JSRuntime=@JSRuntime
                              IconPath="icons/image.svg"
@@ -44,8 +44,8 @@
         </div>
 
         <div class="mt-2 flex items-center justify-center gap-4 text-center">
-            <img class="copy-to-clipboard-button h-[25px] w-[25px]" src="icons/copy.svg" @onclick=@(async () => await CopyToClipboard()) @ref=_copyToClipboardButton />
-            <h2 class="max-w-[80vw] text-xl font-bold break-words">@_code.Value</h2>
+            <img class="copy-to-clipboard-button size-icon-lg" src="icons/copy.svg" @onclick=@(async () => await CopyToClipboardAsync()) @ref=_copyToClipboardButton />
+            <h2 class="max-w-text-wide text-xl font-bold break-words">@_code.Value</h2>
         </div>
     }
 </div>
@@ -63,7 +63,7 @@
     private ElementReference? _copyToClipboardButton;
 
     /// <summary>
-    /// Sets parameters and generates code bytes and Base64 png image
+    /// Sets parameters and generates code bytes and Base64 png image.
     /// </summary>
     public override async Task SetParametersAsync(ParameterView parameters)
     {
@@ -71,18 +71,23 @@
 
         _code = await LocalStorageService.GetCodeAsync(Id);
 
-        if (string.IsNullOrWhiteSpace(_code?.Value) || string.IsNullOrWhiteSpace(_code?.Type) || string.IsNullOrWhiteSpace(_code?.Format))
+        if (_code is null
+            || string.IsNullOrWhiteSpace(_code.Value)
+            || string.IsNullOrWhiteSpace(_code.Type)
+            || string.IsNullOrWhiteSpace(_code.Format))
+        {
             return;
+        }
 
-        _codeType = _code.Type != "WiFi" ? Regex.Replace(_code.Type!, "(\\B[A-Z])", " $1") : _code.Type;
-        CodeService.GenerateCodeBytes(_code, ref _codeBytes);
-        CodeService.GetCodeBase64PngImage(_codeBytes, ref _imageBase64);
+        _codeType = QrFormats.Get(_code.Type)?.DisplayName ?? _code.Type;
+        _codeBytes = CodeService.GenerateCodeBytes(_code);
+        _imageBase64 = CodeService.GetCodeBase64PngImage(_codeBytes);
 
         await InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
-    /// Toggles favorite property of code and displays toast notification
+    /// Toggles favorite property of code and displays toast notification.
     /// </summary>
     private async Task ToggleFavoriteAsync()
     {
@@ -91,12 +96,14 @@
     }
 
     /// <summary>
-    /// Copies code value to clipboard and displays toast notification
+    /// Copies code value to clipboard and displays toast notification.
     /// </summary>
-    private async Task CopyToClipboard()
+    private async Task CopyToClipboardAsync()
     {
         if (string.IsNullOrWhiteSpace(_code?.Value))
+        {
             return;
+        }
 
         await JSRuntime.InvokeVoidAsync("playButtonAnimation", _copyToClipboardButton);
         await JSRuntime.InvokeVoidAsync("copyToClipboard", _code.Value);

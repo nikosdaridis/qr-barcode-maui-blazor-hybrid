@@ -1,11 +1,11 @@
-﻿@page "/"
+@page "/"
 
 @inject NavigationManager NavigationManager
 @inject LocalStorageService LocalStorageService
 
 @code {
     /// <summary>
-    /// Retrieves active tab and navigates to active tab or navigates to history tab and displays camera scanner popup
+    /// Retrieves active tab and navigates to active tab or navigates to history tab and displays camera scanner popup.
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
@@ -15,10 +15,12 @@
 
         if (string.IsNullOrWhiteSpace(activeTab))
         {
-            NavigationManager.NavigateTo("/history");
+            NavigationManager.NavigateTo(RoutePaths.HISTORY);
             Application.Current!.Windows[0].Page!.ShowPopup(new CameraScanner(NavigationManager, LocalStorageService));
         }
         else
+        {
             NavigationManager.NavigateTo(activeTab);
+        }
     }
 }

@@ -8,20 +8,35 @@
 
 <TabHeader Name=@($"Generate {Format}") />
 
-<div class="main-content grid w-[90vw]">
+<div class="main-content w-content grid">
     @if (_model is not null)
     {
         <EditForm Model=@_model OnValidSubmit=HandleSubmitAsync>
             <DataAnnotationsValidator />
             <ValidationSummary />
-            @foreach (PropertyInfo property in _model.GetType().GetProperties())
+            @foreach (PropertyInfo property in _model.GetType().GetProperties().Where(IsRenderableProperty))
             {
                 <label class="my-2 block" for=@property.Name>@property.Name</label>
 
+                Type underlyingType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
                 string[]? dropdownOptions = property.GetCustomAttribute<DropdownOptionsAttribute>()?.Options;
-                if (dropdownOptions is not null)
+
+                if (underlyingType.IsEnum)
                 {
-                    <select class="border-input placeholder-gray-400 w-[90vw] rounded-xl border bg-primary p-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    object? selectedEnum = property.GetValue(_model);
+                    <select class="form-input"
+                            value=@selectedEnum?.ToString()
+                            @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value))>
+                        @foreach (object enumValue in Enum.GetValues(underlyingType))
+                        {
+                            string memberName = enumValue.ToString()!;
+                            <option value=@memberName>@GetEnumDisplayName(underlyingType, memberName)</option>
+                        }
+                    </select>
+                }
+                else if (dropdownOptions is not null)
+                {
+                    <select class="form-input"
                             @onchange=@((ChangeEventArgs e) => SetValue(property, e.Value))>
                         @foreach (string option in dropdownOptions)
                         {
@@ -35,9 +50,11 @@
                     object? propertyValue = property.GetValue(_model);
 
                     if (property.PropertyType == typeof(DateTime) && propertyValue is not null)
+                    {
                         propertyValue = ((DateTime)propertyValue).ToString("yyyy-MM-ddTHH:mm");
+                    }
 
-                    <input class="border-input placeholder-gray-400 w-[90vw] rounded-xl border bg-primary p-2 focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                    <input class="form-input"
                            type=@inputType
                            value=@propertyValue
                            step=@(property.PropertyType == typeof(double) || Nullable.GetUnderlyingType(property.PropertyType) == typeof(double) ? "0.000001" : "1")
@@ -65,84 +82,88 @@
     private ElementReference _generateButton;
 
     /// <summary>
-    /// Initializes code generate model based on type and format
+    /// Initializes code generate model based on type and format.
     /// </summary>
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
         if (string.IsNullOrWhiteSpace(Type) || string.IsNullOrWhiteSpace(Format))
-            return;
-
-        // Barcode models
-        _model = Format switch
         {
-            "Code128" => new Code128Model(),
-            "Code39" => new Code39Model(),
-            "Code93" => new Code93Model(),
-            "CodaBar" => new CodaBarModel(),
-            "Ean13" => new Ean13Model(),
-            "Ean8" => new Ean8Model(),
-            "Itf" => new ItfModel(),
-            "Upca" => new UpcaModel(),
-            "Upce" => new UpceModel(),
-            "I2OF5" => new I2OF5Model(),
-            _ => null
-        };
-
-        if (_model is not null)
             return;
+        }
 
-        // QR models
-        _model = Type switch
-        {
-            "Text" => new TextModel(),
-            "Url" => new UrlModel(),
-            "Email" => new EmailModel(),
-            "WiFi" => new WiFiModel(),
-            "GeographicCoordinates" => new GeographicCoordinatesModel(),
-            "ContactInfo" => new ContactInfoModel(),
-            "CalendarEvent" => new CalendarEventModel(),
-            "Phone" => new PhoneModel(),
-            "Sms" => new SmsModel(),
-            _ => new TextModel()
-        };
+        _model = BarcodeFormats.Get(Format)?.Factory()
+            ?? QrFormats.Get(Type)?.Factory()
+            ?? new TextModel();
     }
 
     /// <summary>
-    /// Sets value of property
+    /// Sets value of property, parsing enums via member name and other types via <see cref="Convert.ChangeType(object?, System.Type)"/>.
     /// </summary>
     private void SetValue(PropertyInfo property, object? value)
     {
-        if (string.IsNullOrWhiteSpace(value?.ToString()))
-            property.SetValue(_model, null);
-        else
+        string? valueString = value?.ToString();
+
+        if (string.IsNullOrWhiteSpace(valueString))
         {
-            try
+            if (IsNullablePropertyType(property.PropertyType))
             {
-                property.SetValue(_model, Convert.ChangeType(value, Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType));
+                property.SetValue(_model, null);
             }
-            catch
-            {
-                return;
-            }
+            return;
+        }
+
+        Type underlyingType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+
+        try
+        {
+            object? converted = underlyingType.IsEnum
+                ? Enum.Parse(underlyingType, valueString)
+                : Convert.ChangeType(value, underlyingType);
+            property.SetValue(_model, converted);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"{nameof(SetValue)} conversion failed for {property.Name}: {ex}");
         }
     }
 
     /// <summary>
-    /// Saves generated code and navigates to details tab
+    /// Returns true when the property accepts <c>null</c> — reference types or <see cref="Nullable{T}"/>.
+    /// </summary>
+    private static bool IsNullablePropertyType(Type type) =>
+        !type.IsValueType || Nullable.GetUnderlyingType(type) is not null;
+
+    /// <summary>
+    /// Saves generated code and navigates to details tab.
     /// </summary>
     private async Task HandleSubmitAsync()
     {
         if (_model is null)
+        {
             return;
+        }
 
-        // Sets type to Isbn if Ean13 starts with 978 or 979
-        if (_model is Ean13Model && _model.GetValue().StartsWith("978") || _model.GetValue().StartsWith("979"))
-            Type = "Isbn";
+        if (_model is Ean13Model { IsIsbn: true })
+        {
+            Type = QrFormats.ISBN_TYPE;
+        }
 
-        string id = await LocalStorageService.SaveCodeAsync(_model!.GetValue(), Type!, Format!, "Generated");
+        string id = await LocalStorageService.SaveCodeAsync(_model.GetValue(), Type!, Format!, CodeSource.GENERATED);
 
         NavigationManager.NavigateTo($"/details/{id}");
     }
+
+    /// <summary>
+    /// Filters reflected properties to those that produce a form input. Skips computed/derived properties.
+    /// </summary>
+    private static bool IsRenderableProperty(PropertyInfo property) =>
+        property.CanWrite;
+
+    /// <summary>
+    /// Resolves an enum member's display label, preferring <see cref="DisplayAttribute.Name"/> when provided.
+    /// </summary>
+    private static string GetEnumDisplayName(Type enumType, string memberName) =>
+        enumType.GetField(memberName)?.GetCustomAttribute<DisplayAttribute>()?.Name ?? memberName;
 }

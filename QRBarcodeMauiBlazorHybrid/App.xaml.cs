@@ -1,15 +1,14 @@
-﻿namespace QRBarcodeMauiBlazorHybrid
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
-        }
+namespace QRBarcodeMauiBlazorHybrid;
 
-        protected override Window CreateWindow(IActivationState? activationState)
-        {
-            return new Window(new MainPage()) { Title = "QRBarcodeMauiBlazorHybrid" };
-        }
+public sealed partial class App : Application
+{
+    public App()
+    {
+        InitializeComponent();
+    }
+
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new MainPage()) { Title = "QRBarcodeMauiBlazorHybrid" };
     }
 }
