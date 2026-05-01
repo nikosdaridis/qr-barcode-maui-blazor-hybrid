@@ -41,7 +41,7 @@ namespace QRBarcodeMauiBlazorHybrid.Services
         {
             CodeModel newCode = new() { Value = value, Type = type, Format = format, Source = source, Favorite = false };
             Dictionary<string, CodeModel> codes = await GetCodesAsync();
-            string id = Ulid.NewUlid().ToString();
+            string id = Guid.CreateVersion7().ToString();
             codes.TryAdd(id, newCode);
             await localStorageService.SetItemAsync(StorageKeys.Codes, codes);
 

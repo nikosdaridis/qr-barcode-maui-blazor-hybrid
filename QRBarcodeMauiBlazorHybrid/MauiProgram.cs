@@ -17,7 +17,15 @@ public static class MauiProgram
             {
                 fonts.AddFont("Poppins-Regular.ttf", "PoppinsRegular");
             })
-            .UseMauiCommunityToolkit()
+            .UseMauiCommunityToolkit(options =>
+            {
+                options.SetPopupOptionsDefaults(new DefaultPopupOptionsSettings
+                {
+                    Shape = null,
+                    Shadow = null,
+                    PageOverlayColor = Colors.Transparent,
+                });
+            })
             .UseBarcodeScanning();
 
         builder.Services.AddMauiBlazorWebView();
