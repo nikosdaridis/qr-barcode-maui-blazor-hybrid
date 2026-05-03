@@ -80,28 +80,28 @@
     display: none;
 }
 
-.tab-bar-nav-link img,
-.generate-icon {
+.tab-bar__nav-link img,
+.icon--generate {
     filter: var(--filter-icon-inactive);
 }
 
-.tab-bar-nav-link.active img,
-.rect-arrow,
-.action-button img,
-.copy-to-clipboard-button {
+.tab-bar__nav-link--active img,
+.icon--arrow,
+.icon-button--action img,
+.icon-button--copy {
     filter: var(--filter-icon-highlight);
 }
 
-.share-button img {
+.icon-button--share img {
     filter: var(--filter-icon-share);
 }
 
-.delete-button img {
+.icon-button--delete img {
     filter: var(--filter-icon-delete);
 }
 
-.favorite-button img,
-.favorite-icon {
+.icon-button--favorite img,
+.icon--favorite {
     filter: var(--filter-icon-favorite);
 }
 

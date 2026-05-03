@@ -1,14 +1,14 @@
 @if (TabName == RoutePaths.SCAN_TAB)
 {
-    <div class="tab-bar-nav-link flex flex-1 items-center justify-center" @onclick=ShowCameraScannerPopupAsync>
+    <div class="tab-bar__nav-link flex flex-1 items-center justify-center" @onclick=ShowCameraScannerPopupAsync>
         <img class="size-icon-xl" src="icons/scan.svg" />
     </div>
 }
 else
 {
-    <NavLink class="tab-bar-nav-link flex flex-1 items-center justify-center" href=@($"/{TabName}")>
-        <img class="@(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? string.Empty : "active") size-icon-xl transition duration-300 ease-in-out"
-             src=@($"icons/{TabName}{(string.IsNullOrWhiteSpace(_activeTab) || !_activeTab.Contains(TabName!) ? string.Empty : "-active")}.svg") />
+    <NavLink class="tab-bar__nav-link flex flex-1 items-center justify-center" href=@($"/{TabName}")>
+        <img class="@(IsActive ? "tab-bar__nav-link--active" : string.Empty) size-icon-xl transition duration-300 ease-in-out"
+             src=@($"icons/{TabName}{(IsActive ? "-active" : string.Empty)}.svg") />
     </NavLink>
 }
 
@@ -24,6 +24,8 @@ else
 
     private string? _activeTab;
     private bool _isPopupShown;
+
+    private bool IsActive => !string.IsNullOrWhiteSpace(_activeTab) && _activeTab.Contains(TabName!);
 
     /// <summary>
     /// Sets component parameters and active tab from URL.

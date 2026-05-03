@@ -44,7 +44,7 @@
         </div>
 
         <div class="mt-2 flex items-center justify-center gap-4 text-center">
-            <img class="copy-to-clipboard-button size-icon-lg" src="icons/copy.svg" @onclick=@(async () => await CopyToClipboardAsync()) @ref=_copyToClipboardButton />
+            <img class="icon-button--copy size-icon-lg" src="icons/copy.svg" @onclick=@(async () => await CopyToClipboardAsync()) @ref=_copyToClipboardButton />
             <h2 class="max-w-text-wide text-xl font-bold break-words">@_code.Value</h2>
         </div>
     }

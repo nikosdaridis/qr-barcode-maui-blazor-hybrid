@@ -35,7 +35,7 @@
     /// </summary>
     private string GetButtonClass()
     {
-        string baseClass = IconPath switch
+        string variant = IconPath switch
         {
             string path when path.Contains("share") => "share",
             string path when path.Contains("favorite") => "favorite",
@@ -43,7 +43,7 @@
             _ => "action"
         };
 
-        return $"{baseClass}-button";
+        return $"icon-button--{variant}";
     }
 
     /// <summary>
